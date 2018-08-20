@@ -41,6 +41,24 @@ type shiftRow struct {
 	EmployeeUser *string `json:"employee_user,omitempty" query:"11" name:"Employee User"`
 }
 
+type ShiftDetail struct {
+	Shift
+	HoursFormatted *string `json:"hours_formatted" query:"11" name:"Hours Formatted"`
+	ShiftItems     []Shift `json:"shifts,omitempty" query:"8" name:"Shifts"`
+}
+
+type shiftDetailRow struct {
+	ShiftDetail
+	ManagerUser  *string `json:"manager_user,omitempty" query:"11" name:"Manager User"`
+	EmployeeUser *string `json:"employee_user,omitempty" query:"11" name:"Employee User"`
+	Shifts       *string `json:"shifts,omitempty" query:"8" name:"Shifts"`
+}
+
+type UsersAvailable struct {
+	ID             int    `json:"id"`
+	UsersAvailable []User `json:"users_available"`
+}
+
 // Parse the row object and return the resulting shift object with any extra details.
 func rowsToShifts(rows []shiftRow) []Shift {
 	result := make([]Shift, len(rows))
@@ -51,6 +69,24 @@ func rowsToShifts(rows []shiftRow) []Shift {
 		}
 		if row.EmployeeUser != nil {
 			json.Unmarshal([]byte(*row.EmployeeUser), &shift.EmployeeUserObj)
+		}
+		result[i] = shift
+	}
+	return result
+}
+
+func rowsToShiftDetails(rows []shiftDetailRow) []ShiftDetail {
+	result := make([]ShiftDetail, len(rows))
+	for i, row := range rows {
+		shift := row.ShiftDetail
+		if row.ManagerUser != nil {
+			json.Unmarshal([]byte(*row.ManagerUser), &shift.ManagerUserObj)
+		}
+		if row.EmployeeUser != nil {
+			json.Unmarshal([]byte(*row.EmployeeUser), &shift.EmployeeUserObj)
+		}
+		if row.Shifts != nil {
+			json.Unmarshal([]byte(*row.Shifts), &shift.ShiftItems)
 		}
 		result[i] = shift
 	}
@@ -83,6 +119,7 @@ func (ctx DShifts) GetShifts(params filtering.RequestParams) ([]Shift, *DError) 
 
 func (ctx DShifts) GetMyShifts(params filtering.RequestParams) ([]Shift, *DError) {
 	db, err := gorm.Open("postgres", conf.Cfg.ConnectionString)
+	db.LogMode(true)
 	if err != nil {
 		return nil, NewServerError("Error, could not retrieve shifts at this time.", err)
 	}
@@ -106,29 +143,62 @@ func (ctx DShifts) GetMyShifts(params filtering.RequestParams) ([]Shift, *DError
 	return rowsToShifts(result), nil
 }
 
-func (ctx DShifts) GetShiftDetails(params filtering.RequestParams, id int) ([]Shift, *DError) {
+func (ctx DShifts) GetShiftDetails(params filtering.RequestParams, id int) (*ShiftDetail, *DError) {
 	db, err := gorm.Open("postgres", conf.Cfg.ConnectionString)
+	db.LogMode(true)
 	if err != nil {
 		return nil, NewServerError("Error, could not retrieve shifts at this time.", err)
 	}
 	defer db.Close()
 
-	result := make([]shiftRow, 0)
+	result := make([]shiftDetailRow, 0)
 
 	db = db.
 		Table("public.vw_shifts_detailed_api").
 		Select(params.Fields).
-		Order(params.Sorts).
 		Offset((params.Page * params.PageSize) - params.PageSize).
 		Limit(params.PageSize).
-		Where("group_by_id = ?", id)
+		Where("id = ?", id)
 
 	if len(params.Filters) > 0 || params.DateRange != nil {
 		db = filtering.WhereFilters(db, params, ctx.Constraints())
 	}
 
 	db.Scan(&result)
-	return rowsToShifts(result), nil
+	return &rowsToShiftDetails(result)[0], nil
+}
+
+func (ctx DShifts) GetNonConflictingUsers(id int) (*UsersAvailable, *DError) {
+	db, err := gorm.Open("postgres", conf.Cfg.ConnectionString)
+	db.LogMode(true)
+	if err != nil {
+		return nil, NewServerError("Error, could not retrieve shifts at this time.", err)
+	}
+	defer db.Close()
+
+	result := make([]struct {
+		ID             int
+		UsersAvailable string
+	}, 0)
+
+	db = db.
+		Table("public.vw_shifts_available_users").
+		Select("id, users_available").
+		Where("id = ?", id)
+
+	db.Scan(&result)
+	final := make([]UsersAvailable, len(result))
+	for i, row := range result {
+		item := UsersAvailable{
+			ID:             row.ID,
+			UsersAvailable: make([]User, 0),
+		}
+		if row.UsersAvailable != "[]" {
+			json.Unmarshal([]byte(row.UsersAvailable), &item.UsersAvailable)
+		}
+		final[i] = item
+	}
+	return &final[0], nil
 }
 
 func (ctx DShifts) CreateShift(shift Shift) (response *Shift, rerr *DError) {
@@ -340,8 +410,11 @@ func (ctx DShifts) verifyShift(id *int, shift *Shift, db *gorm.DB) *DError {
 			Table("public.vw_shifts_api").
 			Select("id").
 			Where("employee_id = ?", *shift.EmployeeID).
-			Where("(start_time::timestamp >= ?::timestamp AND start_time::timestamp < ?::timestamp) OR (end_time::timestamp > ?::timestamp AND end_time::timestamp <= ?::timestamp)",
-				*start, *end, *start, *end)
+			//(s2.start_time < s.end_time AND s2.start_time >= s.start_time) AND (s2.end_time > s.start_time AND s2.end_time <= s.end_time)
+			Where("(?::timestamp < end_time::timestamp AND ?::timestamp >= start_time::timestamp) OR (?::timestamp > start_time::timestamp AND ?::timestamp <= end_time::timestamp)",
+				*start, *start, *end, *end)
+			// Where("(start_time::timestamp >= ?::timestamp AND start_time::timestamp < ?::timestamp) OR (end_time::timestamp > ?::timestamp AND end_time::timestamp <= ?::timestamp)",
+			// 	*start, *end, *start, *end)
 		if id != nil { // If this is an update, make sure we exclude the existing shift.
 			d = d.Where("id != ?", *id)
 		}
