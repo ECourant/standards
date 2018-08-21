@@ -16,6 +16,7 @@ CREATE TYPE public.user AS (
   updated_at TEXT
 );
 
+-- This is used below in the shift detail view to show multiple overlapping shifts in a single row.
 DROP TYPE IF EXISTS public.shift CASCADE;
 CREATE TYPE public.shift AS (
   id            INT,
@@ -151,7 +152,7 @@ CREATE VIEW public.vw_shifts_detailed_api AS
          to_char(s.end_time, 'Dy, Mon DD HH24:MI:SS.MS YYYY')                                                                                                    AS end_time,
          to_char(s.created_at, 'Dy, Mon DD HH24:MI:SS.MS YYYY')                                                                                                  AS created_at,
          to_char(s.updated_at, 'Dy, Mon DD HH24:MI:SS.MS YYYY')                                                                                                  AS updated_at,
-         CASE
+         CASE -- This will take all of the shift objects and aggregate them into a JSON array. Essentially a 3 dimensional row.
            WHEN SUM(COALESCE(s2.id, 0)) > 0 THEN to_json(array_agg(
                                                            row (s2.id,
                                                                s2.manager_id,
@@ -202,6 +203,8 @@ CREATE VIEW public.vw_shifts_detailed_api AS
            employee.created_at,
            employee.updated_at;
 
+-- This view is really only used in the UI. It's used to query what users are available based off an existing shifts start and end time.
+-- Essentially making it easy to update a shift's employee with only other employees who are available.
 DROP VIEW IF EXISTS public.vw_shifts_available_users;
 CREATE VIEW public.vw_shifts_available_users AS
   SELECT shift.id,
@@ -268,7 +271,7 @@ CREATE VIEW public.vw_shifts_summary_api AS
                                s2.shift_id                                                                                         AS shift_id,
                                CASE
                                  WHEN to_date(to_char(s2.end_time, 'YYYYWW'), 'YYYYWW') < localtimestamp THEN GREATEST(LEAST(s2.end_time, localtimestamp) - to_date(to_char(s2.end_time, 'YYYYWW'), 'YYYYWW') - (s2.breaks * INTERVAL '1 Hour'), 0 * INTERVAL '1 Second')
-                                 ELSE 0 * INTERVAL '1 Second'
+                                 ELSE INTERVAL '0 Hours'
                                    END                                                                                             AS hours_worked,
                                s2.end_time - to_date(to_char(s2.end_time, 'YYYYWW'), 'YYYYWW') - (s2.breaks * INTERVAL '1 Hour')   AS hours_scheduled,
                                s2.breaks                                                                                           AS breaks
