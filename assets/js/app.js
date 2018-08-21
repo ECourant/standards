@@ -144,7 +144,7 @@
         // App root element
         root: '#app',
         // App Name
-        name: 'My App',
+        name: 'Time Demo',
         // App id
         id: 'com.myapp.test',
         // Enable swipe panel
