@@ -1,5 +1,6 @@
 ﻿(function () {
-    //Helpers
+    // Helpers
+    // I added these in to help a bit with displaying some data in a user friendly way using Framework7
     Template7.registerHelper('title_case', function (str) {
         str = str.toLowerCase().split(' ');
         for (let i = 0; i < str.length; i++) {
@@ -16,7 +17,8 @@
         }
     });
 
-    //Views
+    // Views
+    // Framework7 breaks up all the views into serpate "Templates" which it then renders with context data I provide
     var homeView = Template7.compile(Dom7("#homeView").html());
     var appView = Template7.compile(Dom7("#appView").html());
     var shiftsFiltersView = Template7.compile(Dom7("#shiftsFiltersView").html());
@@ -25,10 +27,12 @@
     var changeEmployeeView = Template7.compile(Dom7("#changeEmployeeView").html());
     var createShiftView = Template7.compile(Dom7("#createShiftView").html());
 
+
+
+    // This entire section of variables is used to cache or keep track of data needed for the UI or for querying the REST API for more data.
     var current_user_id = -1;
     var current_user_name = "";
     var current_user_is_manager = false;
-
     var current_date = new Date();
 
     // The filter variables will be used to generate urls for API requests.
@@ -55,7 +59,6 @@
             params.push("page_size=" + this.page_size);
             params.push("order=" + encodeURI(this.sort));
             url = url + "?" + params.join("&");
-            console.log(url);
             return url;
         },
         Reset: function () {
@@ -67,7 +70,6 @@
             this.message = "Showing shifts from " + parseDateToURLParam(this.date_from) + " to " + parseDateToURLParam(this.date_to);
         }
     };
-
     var current_summary_filter = {
         date_from: new Date(new Date().setDate(current_date.getDate() - 14)),
         date_to: new Date(new Date().setDate(current_date.getDate() + 7)),
@@ -87,7 +89,6 @@
             params.push("page_size=" + this.page_size);
             params.push("order=" + encodeURI(this.sort));
             url = url + "?" + params.join("&");
-            console.log(url);
             return url;
         },
         Reset: function () {
@@ -98,7 +99,6 @@
             this.message = "Showing shifts from " + parseDateToURLParam(this.date_from) + " to " + parseDateToURLParam(this.date_to);
         }
     };
-
     var current_overlapping_filter = {
         id: -1,
         page: 1,
@@ -111,11 +111,9 @@
             params.push("page=" + this.page);
             params.push("page_size=" + this.page_size);
             url = url + "?" + params.join("&");
-            console.log(url);
             return url;
         },
     };
-
     var current_non_overlapping_filter = {
         id: -1,
         base_url: "http://localhost:8080/api/shifts/nonoverlapping",
@@ -123,16 +121,11 @@
             var url = this.base_url + "/" + this.id + "/users";
             var params = ["current_user_id=" + current_user_id];
             url = url + "?" + params.join("&");
-            console.log(url);
             return url;
         },
     };
-
-
     var shifts = [];
     var summaries = [];
-
-
     var current_shift_detail;
 
     function parseDateToURLParam(date) {
@@ -156,6 +149,7 @@
         },
         // Add default routes
         routes: [
+            // This is the view displayed when the website launches. Since I'm not building in any authentication, you can simply selecr a user.
             {
                 path: '/homeView/',
                 async: function (routeTo, routeFrom, resolve, reject) {
@@ -173,6 +167,7 @@
                     });
                 },
             },
+            // The App view actually gives the user some information, displaying shifts and summaries of hours worked on two sepreate tabs.
             {
                 path: '/appView/',
                 async: function (routeTo, routeFrom, resolve, reject) {
@@ -209,6 +204,7 @@
                     });
                 },
             },
+            // This view just alters the current shifts filter object.
             {
                 path: '/shiftsFiltersView/',
                 async: function (routeTo, routeFrom, resolve, reject) {
@@ -238,6 +234,7 @@
                     }
                 }
             },
+            // This view just alters the current summaries filter object.
             {
                 path: '/summariesFiltersView/',
                 async: function (routeTo, routeFrom, resolve, reject) {
@@ -266,6 +263,7 @@
                     }
                 }
             },
+            // Shows detailed information about a single shift. Allows the employee to be changed if the current user is a manager.
             {
                 path: '/shiftDetailsView/',
                 async: function (routeTo, routeFrom, resolve, reject) {
@@ -292,6 +290,7 @@
                     });
                 },
             },
+            // View for changing the employee that is assigned to a single shift.
             {
                 path: '/changeEmployeeView/',
                 async: function (routeTo, routeFrom, resolve, reject) {
@@ -320,6 +319,7 @@
                     });
                 },
             },
+            // View for creating new shifts.
             {
                 path: '/createShiftView/',
                 async: function (routeTo, routeFrom, resolve, reject) {
@@ -543,15 +543,18 @@
         ],
         // ... other parameters
     });
+    // Once all the views have been created, set the view to the home view landing page.
     app.router.navigate("/homeView/", {
         animate: false
     });
 
+
+
+    // Basic UI event handling
     $(document).on("click", ".login-select", function () {
         current_user_id = parseInt($(this).attr("user-id"));
         current_user_name = $(this).attr("user-name");
         current_user_is_manager = $(this).attr("user-role") == "manager";
-        console.log("New Current User: " + current_user_id);
         current_shifts_filter.Reset();
         current_summary_filter.Reset();
         app.router.navigate("/appView/");
@@ -622,7 +625,6 @@
 
     $(document).on("click", "#submitEmployeeChange", function () {
         var selValue = $('input[name=employee-radio]:checked').val();
-        console.log("New ID: " + selValue);
         if (selValue != null) {
             updateShiftEmployee(current_overlapping_filter.id, parseInt(selValue));
         }
@@ -641,7 +643,6 @@
     });
 
     function updateShiftEmployee(shift_id, employee_id) {
-        console.log("Setting employee_id of shift " + shift_id + " to " + employee_id);
         $.ajax({
             type: "PUT",
             url: "http://localhost:8080/api/shifts/" + shift_id + "?current_user_id=" + current_user_id,
@@ -692,13 +693,6 @@
         if (user_id == -1) {
             user_id = null;
         }
-
-        console.log({
-            from_date,
-            to_date,
-            user_id,
-            manager_id
-        });
         $.ajax({
             type: "POST",
             url: "http://localhost:8080/api/shifts?current_user_id=" + current_user_id,

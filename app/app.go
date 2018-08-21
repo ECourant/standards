@@ -36,8 +36,6 @@ func App() *iris.Application {
 			ctx.HTML(string(html))
 		}
 	})
-
-
 	return app
 }
 
