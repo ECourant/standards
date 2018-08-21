@@ -119,7 +119,6 @@ func (ctx DShifts) GetShifts(params filtering.RequestParams) ([]Shift, *DError) 
 
 func (ctx DShifts) GetMyShifts(params filtering.RequestParams) ([]Shift, *DError) {
 	db, err := gorm.Open("postgres", conf.Cfg.ConnectionString)
-	db.LogMode(true)
 	if err != nil {
 		return nil, NewServerError("Error, could not retrieve shifts at this time.", err)
 	}
@@ -145,7 +144,6 @@ func (ctx DShifts) GetMyShifts(params filtering.RequestParams) ([]Shift, *DError
 
 func (ctx DShifts) GetShiftDetails(params filtering.RequestParams, id int) (*ShiftDetail, *DError) {
 	db, err := gorm.Open("postgres", conf.Cfg.ConnectionString)
-	db.LogMode(true)
 	if err != nil {
 		return nil, NewServerError("Error, could not retrieve shifts at this time.", err)
 	}
@@ -170,7 +168,6 @@ func (ctx DShifts) GetShiftDetails(params filtering.RequestParams, id int) (*Shi
 
 func (ctx DShifts) GetNonConflictingUsers(id int) (*UsersAvailable, *DError) {
 	db, err := gorm.Open("postgres", conf.Cfg.ConnectionString)
-	db.LogMode(true)
 	if err != nil {
 		return nil, NewServerError("Error, could not retrieve shifts at this time.", err)
 	}
@@ -202,7 +199,6 @@ func (ctx DShifts) GetNonConflictingUsers(id int) (*UsersAvailable, *DError) {
 }
 
 func (ctx DShifts) CreateShift(shift Shift) (response *Shift, rerr *DError) {
-
 	db, err := gorm.Open("postgres", conf.Cfg.ConnectionString)
 	if err != nil {
 		return nil, NewServerError("Error, could not retrieve shifts at this time.", err)
@@ -410,11 +406,9 @@ func (ctx DShifts) verifyShift(id *int, shift *Shift, db *gorm.DB) *DError {
 			Table("public.vw_shifts_api").
 			Select("id").
 			Where("employee_id = ?", *shift.EmployeeID).
-			//(s2.start_time < s.end_time AND s2.start_time >= s.start_time) AND (s2.end_time > s.start_time AND s2.end_time <= s.end_time)
+			// This will filter and return any shifts that overlap with the start and end timestamps provided.
 			Where("(?::timestamp < end_time::timestamp AND ?::timestamp >= start_time::timestamp) OR (?::timestamp > start_time::timestamp AND ?::timestamp <= end_time::timestamp)",
 				*start, *start, *end, *end)
-			// Where("(start_time::timestamp >= ?::timestamp AND start_time::timestamp < ?::timestamp) OR (end_time::timestamp > ?::timestamp AND end_time::timestamp <= ?::timestamp)",
-			// 	*start, *end, *start, *end)
 		if id != nil { // If this is an update, make sure we exclude the existing shift.
 			d = d.Where("id != ?", *id)
 		}
