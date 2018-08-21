@@ -17,6 +17,10 @@
         }
     });
 
+    Template7.registerHelper('format_date', function (date) {
+        return "FORMATTED DATE"
+    });
+
     // Views
     // Framework7 breaks up all the views into serpate "Templates" which it then renders with context data I provide
     var homeView = Template7.compile(Dom7("#homeView").html());
@@ -41,7 +45,7 @@
         date_from: new Date(new Date().setDate(current_date.getDate() - 7)),
         date_to: new Date(),
         page: 1,
-        page_size: 10,
+        page_size: 1000,
         base_url: "http://localhost:8080/api/shifts",
         sort: " start_time",
         message: "Showing shifts for the next 7 days.",
@@ -74,7 +78,7 @@
         date_from: new Date(new Date().setDate(current_date.getDate() - 14)),
         date_to: new Date(new Date().setDate(current_date.getDate() + 7)),
         page: 1,
-        page_size: 10,
+        page_size: 1000,
         base_url: "http://localhost:8080/api/summaries",
         sort: "-week_start",
         message: "Showing shifts for the next 14 days.",
@@ -102,7 +106,7 @@
     var current_overlapping_filter = {
         id: -1,
         page: 1,
-        page_size: 100,
+        page_size: 1000,
         base_url: "http://localhost:8080/api/shifts/overlapping",
         GetOverlappingURL: function () {
             var url = this.base_url + "/" + this.id;
@@ -677,6 +681,42 @@
         });
     }
 
+    function updateShiftTime(shift_id, start_time, end_time) {
+        $.ajax({
+            type: "PUT",
+            url: "http://localhost:8080/api/shifts/" + shift_id + "?current_user_id=" + current_user_id,
+            contentType: "application/json",
+            data: JSON.stringify({
+                start_time: start_time,
+                end_time: end_time
+            }),
+            fail: function(response) {
+                app.dialog.alert(response.message, "Error!");
+            },
+            success: function (response) {
+                app.router.navigate("/changeTimeView/", { animate: false });
+                app.router.navigate("/shiftDetailsView/", {
+                    animate: false,
+                    ignoreCache: true,
+                    force: true,
+                    reloadCurrent: true,
+                    reloadPrevious: true,
+                    reloadAll: true
+                });
+                setTimeout(function() {
+                    app.router.back("/shiftDetailsView/", {
+                        animate: false,
+                        ignoreCache: true,
+                        force: true,
+                        reloadCurrent: true,
+                        reloadPrevious: true,
+                        reloadAll: true
+                    });
+                }, 50);
+            }
+        });
+    }
+
     function createShift(){
         var from_date = $("#create-shift-from-date").val();
         var to_date = $("#create-shift-to-date").val();
@@ -717,7 +757,5 @@
                 app.dialog.alert(response.message, "Error!");
             }
         });
-
-
     }
 })();
