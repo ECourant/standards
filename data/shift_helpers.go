@@ -151,6 +151,7 @@ func (ctx DShifts) getOverlappingShiftsForEmployeeID(current_shift_id *int, shif
 			return NewClientError(fmt.Sprintf("Error, %d shift(s) already exist for user ID %d during the start -> end time. Conflicting shift(s): %s.", len(ids), *employee_id, strings.Join(conflictingShifts, ", ")), nil)
 		}
 	}
+	return nil
 }
 
 func validateShiftStartAndEndTimes(id *int, shift Shift, db *gorm.DB) (*DError) {
