@@ -173,12 +173,10 @@ CREATE VIEW public.vw_shifts_detailed_api AS
   FROM public.shifts s
          INNER JOIN public.users manager ON manager.id = s.manager_id
          LEFT JOIN public.users employee ON employee.id = s.employee_id
-         LEFT JOIN public.shifts s2 ON
-          ((s2.start_time < s.end_time AND s2.start_time >= s.start_time)
-              OR (s2.end_time > s.start_time AND s2.end_time <= s.end_time)
-              OR (s2.start_time < s.start_time AND s2.end_time >= s.end_time))
-                   AND s2.id != s.id
-
+         LEFT JOIN public.shifts s2 ON ((s2.start_time < s.end_time AND s2.start_time >= s.start_time)
+                                          OR (s2.end_time > s.start_time AND s2.end_time <= s.end_time)
+                                          OR (s2.start_time < s.start_time AND s2.end_time >= s.end_time))
+                                         AND s2.id != s.id
          LEFT JOIN public.users semployee ON semployee.id = s2.employee_id
   GROUP BY s.id,
            s.employee_id,
@@ -207,19 +205,21 @@ CREATE VIEW public.vw_shifts_detailed_api AS
 -- Essentially making it easy to update a shift's employee with only other employees who are available.
 DROP VIEW IF EXISTS public.vw_shifts_available_users;
 CREATE VIEW public.vw_shifts_available_users AS
-  SELECT shift.id,
-         to_json(array_agg(row (u.id,
-                               u.name,
-                               u.email,
-                               u.phone,
-                               u.role,
-                               to_char(u.created_at,
-                                       'Dy, Mon DD HH24:MI:SS.MS YYYY'),
-                               to_char(u.updated_at,
-                                       'Dy, Mon DD HH24:MI:SS.MS YYYY')) :: public.user)) AS users_available
-  FROM (SELECT s.id, CASE WHEN (array_agg((SELECT DISTINCT s2.employee_id))) = ARRAY[NULL::int] THEN ARRAY[0] ELSE array_agg((SELECT DISTINCT s2.employee_id)) END AS employees_overlapping
+  SELECT shift.id, to_json(array_agg(row (u.id,
+                                         u.name,
+                                         u.email,
+                                         u.phone,
+                                         u.role,
+                                         to_char(u.created_at,
+                                                 'Dy, Mon DD HH24:MI:SS.MS YYYY'),
+                                         to_char(u.updated_at,
+                                                 'Dy, Mon DD HH24:MI:SS.MS YYYY')) :: public.user)) AS users_available
+  FROM (SELECT s.id,
+               CASE
+                 WHEN (array_agg((SELECT DISTINCT s2.employee_id))) = ARRAY[NULL::int] THEN ARRAY[0]
+                 ELSE array_agg((SELECT DISTINCT s2.employee_id)) END AS employees_overlapping
         FROM public.shifts s
-               LEFT JOIN public.shifts s2 ON ((s2.start_time < s.end_time AND s2.start_time >= s.start_time) OR (s2.end_time > s.start_time AND s2.end_time <= s.end_time)) AND s2.id != s.id AND s2.employee_id IS NOT NULL
+               LEFT JOIN public.shifts s2 ON ((s2.start_time < s.end_time AND s2.start_time >= s.start_time) OR (s2.end_time > s.start_time AND s2.end_time <= s.end_time) OR (s2.start_time < s.start_time AND s2.end_time >= s.end_time)) AND s2.id != s.id AND s2.employee_id IS NOT NULL
         GROUP BY s.id) shift
          LEFT JOIN users u ON u.id != ALL (shift.employees_overlapping)
   GROUP BY shift.id;
