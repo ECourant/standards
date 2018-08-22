@@ -72,12 +72,7 @@ VALUES (3, 1, 'Sun, Aug 17 16:00:00.000 2018', 'Mon, Aug 17 18:00:00.00 2018'),
        (3, 1, 'Sun, Aug 17 18:00:00.000 2018', 'Mon, Aug 17 20:00:00.00 2018'),
        (3, 2, 'Sun, Aug 17 20:00:00.000 2018', 'Mon, Aug 17 22:00:00.00 2018'),
        (3, 3, 'Sun, Aug 19 22:00:00.000 2018', 'Mon, Aug 20 02:00:00.00 2018'),
-       (3, 3, 'Sun, Aug 22 08:00:00.000 2018', 'Mon, Aug 22 14:00:00.00 2018'),
-       (3, 1, localtimestamp - INTERVAL '1 Hours', localtimestamp),
-       (3, null, localtimestamp - INTERVAL '1 Hours', localtimestamp),
-       (3, 1, localtimestamp, localtimestamp + interval '1 hours'),
-       (3, 2, localtimestamp - INTERVAL '1 Hours', localtimestamp),
-       (3, 3, localtimestamp, localtimestamp + interval '1 hours');
+       (3, 3, 'Sun, Aug 22 08:00:00.000 2018', 'Mon, Aug 22 14:00:00.00 2018');
 
 -- This view will be used by the API, it makes it a bit easier to query and to make changes.
 -- Also all of the RFC 2822 formatting is done in the view itself.
@@ -178,7 +173,12 @@ CREATE VIEW public.vw_shifts_detailed_api AS
   FROM public.shifts s
          INNER JOIN public.users manager ON manager.id = s.manager_id
          LEFT JOIN public.users employee ON employee.id = s.employee_id
-         LEFT JOIN public.shifts s2 ON (s2.start_time < s.end_time AND s2.start_time >= s.start_time) AND (s2.end_time > s.start_time AND s2.end_time <= s.end_time) AND s2.id != s.id
+         LEFT JOIN public.shifts s2 ON
+          ((s2.start_time < s.end_time AND s2.start_time >= s.start_time)
+              OR (s2.end_time > s.start_time AND s2.end_time <= s.end_time)
+              OR (s2.start_time < s.start_time AND s2.end_time >= s.end_time))
+                   AND s2.id != s.id
+
          LEFT JOIN public.users semployee ON semployee.id = s2.employee_id
   GROUP BY s.id,
            s.employee_id,
@@ -219,7 +219,7 @@ CREATE VIEW public.vw_shifts_available_users AS
                                        'Dy, Mon DD HH24:MI:SS.MS YYYY')) :: public.user)) AS users_available
   FROM (SELECT s.id, CASE WHEN (array_agg((SELECT DISTINCT s2.employee_id))) = ARRAY[NULL::int] THEN ARRAY[0] ELSE array_agg((SELECT DISTINCT s2.employee_id)) END AS employees_overlapping
         FROM public.shifts s
-               LEFT JOIN public.shifts s2 ON (s2.start_time < s.end_time AND s2.start_time >= s.start_time) AND (s2.end_time > s.start_time AND s2.end_time <= s.end_time) AND s2.id != s.id AND s2.employee_id IS NOT NULL
+               LEFT JOIN public.shifts s2 ON ((s2.start_time < s.end_time AND s2.start_time >= s.start_time) OR (s2.end_time > s.start_time AND s2.end_time <= s.end_time)) AND s2.id != s.id AND s2.employee_id IS NOT NULL
         GROUP BY s.id) shift
          LEFT JOIN users u ON u.id != ALL (shift.employees_overlapping)
   GROUP BY shift.id;

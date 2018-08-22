@@ -407,8 +407,13 @@ func (ctx DShifts) verifyShift(id *int, shift *Shift, db *gorm.DB) *DError {
 			Select("id").
 			Where("employee_id = ?", *shift.EmployeeID).
 			// This will filter and return any shifts that overlap with the start and end timestamps provided.
-			Where("(?::timestamp < end_time::timestamp AND ?::timestamp >= start_time::timestamp) OR (?::timestamp > start_time::timestamp AND ?::timestamp <= end_time::timestamp)",
-				*start, *start, *end, *end)
+			//Where("(?::timestamp < end_time::timestamp AND ?::timestamp >= start_time::timestamp) OR (?::timestamp > start_time::timestamp AND ?::timestamp <= end_time::timestamp)",
+			Where("(?::timestamp < end_time::timestamp AND ?::timestamp >= start_time::timestamp) " +
+				"OR " +
+				"(?::timestamp > start_time::timestamp AND ?::timestamp <= end_time::timestamp) " +
+				"OR " +
+				"(?::timestamp < start_time::timestamp AND ?::timestamp >= end_time::timestamp)",
+				*start, *start, *end, *end, *start, *end)
 		if id != nil { // If this is an update, make sure we exclude the existing shift.
 			d = d.Where("id != ?", *id)
 		}
