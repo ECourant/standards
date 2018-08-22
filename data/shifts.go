@@ -368,6 +368,19 @@ func (ctx DShifts) verifyShift(id *int, shift *Shift, db *gorm.DB) *DError {
 		return NewNotFoundError(fmt.Sprintf("Error, manager_id %d does not exist.", *shift.ManagerID))
 	}
 
+	// If they don't specify the employee for an existing shift, retrieve it so we can make sure there are no conflicts.
+	if shift.EmployeeID == nil && id != nil {
+		employee_id := struct{
+			EmployeeID *int
+		}{}
+		db.
+			Table("public.vw_shifts_api").
+			Where("id = ?", *id).
+			Select("employee_id").
+			First(&employee_id)
+		shift.EmployeeID = employee_id.EmployeeID
+	}
+
 	// If the employee id is not null we want to verify
 	// that this shift will not conflict with another shift.
 	if shift.EmployeeID != nil && *shift.EmployeeID != -1 {
@@ -407,11 +420,11 @@ func (ctx DShifts) verifyShift(id *int, shift *Shift, db *gorm.DB) *DError {
 			Select("id").
 			Where("employee_id = ?", *shift.EmployeeID).
 			// This will filter and return any shifts that overlap with the start and end timestamps provided.
-			Where("((?::timestamp < end_time::timestamp AND ?::timestamp >= start_time::timestamp) " +
+			Where("(?::timestamp < end_time::timestamp AND ?::timestamp >= start_time::timestamp) " +
 				"OR " +
 				"(?::timestamp > start_time::timestamp AND ?::timestamp <= end_time::timestamp) " +
 				"OR " +
-				"(?::timestamp < start_time::timestamp AND ?::timestamp >= end_time::timestamp))",
+				"(?::timestamp <= start_time::timestamp AND ?::timestamp >= end_time::timestamp)",
 				*start, *start, *end, *end, *start, *end)
 		if id != nil { // If this is an update, make sure we exclude the existing shift.
 			d = d.Where("id != ?", *id)

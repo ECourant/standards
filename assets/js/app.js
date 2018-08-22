@@ -357,64 +357,50 @@
                 },
                 on: {
                     pageBeforeIn: function (e, page) {
-
                         let oAP1, oAP2;
                         let dStartD, dEndD, sStartD, sEndD;
-
                         dStartD = new Date();
                         dEndD = new Date(dStartD.getTime() + (8 * $.AnyPicker.extra.iMS.h));
-
                         $("#ip-start-date").AnyPicker(
+                        {
+                            mode: "datetime",
+                            theme: "ios",
+                            inputDateTimeFormat: "MM/dd/yyyy hh:mm AA",
+                            dateTimeFormat: "MMM dd,yyyy hh:mm AA",
+                            onInit: function()
                             {
-                                mode: "datetime",
-                                theme: "ios",
-                                inputDateTimeFormat: "MM/dd/yyyy hh:mm AA",
-                                dateTimeFormat: "MMM dd,yyyy hh:mm AA",
-
-                                onInit: function()
-                                {
-                                    oAP1 = this;
-                                    sEndD = oAP1.formatOutputDates(dEndD, "MM dd yyyy hh:mm AA");
-                                    oAP1.setMaximumDate(sEndD);
-                                    oAP1.setSelectedDate(dStartD);
-
-                                    console.log("maxValue : " + sEndD);
-                                },
-
-                                onSetOutput: function(sOutput, oSelectedValues)
-                                {
-                                    sStartD = sOutput;
-                                    oAP2.setMinimumDate(sStartD);
-                                    oAP2.setSelectedDate(sStartD);
-                                    console.log("minValue : " + oAP2.setting.minValue);
-                                }
-                            });
+                                oAP1 = this;
+                                sEndD = oAP1.formatOutputDates(dEndD, "MM dd yyyy hh:mm AA");
+                                oAP1.setMaximumDate(sEndD);
+                                oAP1.setSelectedDate(dStartD);
+                            },
+                            onSetOutput: function(sOutput, oSelectedValues)
+                            {
+                                sStartD = sOutput;
+                                oAP2.setMinimumDate(sStartD);
+                                oAP2.setSelectedDate(sStartD);
+                            }
+                        });
 
                         $("#ip-end-date").AnyPicker(
+                        {
+                            mode: "datetime",
+                            theme: "ios",
+                            inputDateTimeFormat: "MM/dd/yyyy hh:mm AA",
+                            dateTimeFormat: "MMM dd,yyyy hh:mm AA",
+                            onInit: function()
                             {
-                                mode: "datetime",
-                                theme: "ios",
-
-                                inputDateTimeFormat: "MM/dd/yyyy hh:mm AA",
-                                dateTimeFormat: "MMM dd,yyyy hh:mm AA",
-
-                                onInit: function()
-                                {
-                                    oAP2 = this;
-
-                                    sStartD = oAP2.formatOutputDates(dStartD);
-                                    oAP2.setMinimumDate(sStartD);
-                                    oAP2.setSelectedDate(dEndD);
-                                    console.log("minValue : " + sStartD);
-                                },
-
-                                onSetOutput: function(sOutput, oSelectedValues)
-                                {
-                                    sEndD = sOutput;
-                                    oAP1.setMaximumDate(sEndD);
-                                    console.log("maxValue : " + oAP1.setting.maxValue);
-                                }
-                            });
+                                oAP2 = this;
+                                sStartD = oAP2.formatOutputDates(dStartD);
+                                oAP2.setMinimumDate(sStartD);
+                                oAP2.setSelectedDate(dEndD);
+                            },
+                            onSetOutput: function(sOutput, oSelectedValues)
+                            {
+                                sEndD = sOutput;
+                                oAP1.setMaximumDate(sEndD);
+                            }
+                        });
 
                         let name_ids = [];
                         let names = [];
@@ -496,64 +482,50 @@
                 },
                 on: {
                     pageBeforeIn: function (e, page) {
-
                         let oAP1, oAP2;
                         let dStartD, dEndD, sStartD, sEndD;
-
                         dStartD = new Date(current_shift_detail.start_time);
                         dEndD = new Date(current_shift_detail.end_time);
-
                         $("#ip-start-date").AnyPicker(
+                        {
+                            mode: "datetime",
+                            theme: "ios",
+                            inputDateTimeFormat: "MM/dd/yyyy hh:mm AA",
+                            dateTimeFormat: "MMM dd,yyyy hh:mm AA",
+                            onInit: function()
                             {
-                                mode: "datetime",
-                                theme: "ios",
-                                inputDateTimeFormat: "MM/dd/yyyy hh:mm AA",
-                                dateTimeFormat: "MMM dd,yyyy hh:mm AA",
-
-                                onInit: function()
-                                {
-                                    oAP1 = this;
-                                    sEndD = oAP1.formatOutputDates(dEndD, "MM dd yyyy hh:mm AA");
-                                    oAP1.setMaximumDate(sEndD);
-                                    oAP1.setSelectedDate(dStartD);
-
-                                    console.log("maxValue : " + sEndD);
-                                },
-
-                                onSetOutput: function(sOutput, oSelectedValues)
-                                {
-                                    sStartD = sOutput;
-                                    oAP2.setMinimumDate(sStartD);
-                                    oAP2.setSelectedDate(sStartD);
-                                    console.log("minValue : " + oAP2.setting.minValue);
-                                }
-                            });
+                                oAP1 = this;
+                                sEndD = oAP1.formatOutputDates(dEndD, "MM dd yyyy hh:mm AA");
+                                oAP1.setMaximumDate(sEndD);
+                                oAP1.setSelectedDate(dStartD);
+                            },
+                            onSetOutput: function(sOutput, oSelectedValues)
+                            {
+                                sStartD = sOutput;
+                                oAP2.setMinimumDate(sStartD);
+                                oAP2.setSelectedDate(sStartD);
+                            }
+                        });
 
                         $("#ip-end-date").AnyPicker(
+                        {
+                            mode: "datetime",
+                            theme: "ios",
+                            inputDateTimeFormat: "MM/dd/yyyy hh:mm AA",
+                            dateTimeFormat: "MMM dd,yyyy hh:mm AA",
+                            onInit: function()
                             {
-                                mode: "datetime",
-                                theme: "ios",
-
-                                inputDateTimeFormat: "MM/dd/yyyy hh:mm AA",
-                                dateTimeFormat: "MMM dd,yyyy hh:mm AA",
-
-                                onInit: function()
-                                {
-                                    oAP2 = this;
-
-                                    sStartD = oAP2.formatOutputDates(dStartD);
-                                    oAP2.setMinimumDate(sStartD);
-                                    oAP2.setSelectedDate(dEndD);
-                                    console.log("minValue : " + sStartD);
-                                },
-
-                                onSetOutput: function(sOutput, oSelectedValues)
-                                {
-                                    sEndD = sOutput;
-                                    oAP1.setMaximumDate(sEndD);
-                                    console.log("maxValue : " + oAP1.setting.maxValue);
-                                }
-                            });
+                                oAP2 = this;
+                                sStartD = oAP2.formatOutputDates(dStartD);
+                                oAP2.setMinimumDate(sStartD);
+                                oAP2.setSelectedDate(dEndD);
+                            },
+                            onSetOutput: function(sOutput, oSelectedValues)
+                            {
+                                sEndD = sOutput;
+                                oAP1.setMaximumDate(sEndD);
+                            }
+                        });
 
                         let name_ids = [];
                         let names = [];
@@ -708,9 +680,15 @@
             updateShiftEmployee(current_overlapping_filter.id, parseInt(selValue));
         }
     });
+
     $(document).on("click", "#createShift", function () {
         createShift();
     });
+
+    $(document).on("click", "#editShiftTimes", function() {
+       updateShiftTime(current_shift_detail.id, $("#ip-start-date").val(), $("#ip-end-date").val());
+    });
+
 
 
 
@@ -768,9 +746,6 @@
                 start_time: start_time,
                 end_time: end_time
             }),
-            fail: function(response) {
-                app.dialog.alert(response.message, "Error!");
-            },
             success: function (response) {
                 app.router.navigate("/changeTimeView/", { animate: false });
                 app.router.navigate("/shiftDetailsView/", {
