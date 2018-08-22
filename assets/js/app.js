@@ -22,25 +22,25 @@
     });
 
     // Views
-    // Framework7 breaks up all the views into serpate "Templates" which it then renders with context data I provide
-    var homeView = Template7.compile(Dom7("#homeView").html());
-    var appView = Template7.compile(Dom7("#appView").html());
-    var shiftsFiltersView = Template7.compile(Dom7("#shiftsFiltersView").html());
-    var shiftDetailsView = Template7.compile(Dom7("#shiftDetailsView").html());
-    var summariesFiltersView = Template7.compile(Dom7("#summariesFiltersView").html());
-    var changeEmployeeView = Template7.compile(Dom7("#changeEmployeeView").html());
-    var createShiftView = Template7.compile(Dom7("#createShiftView").html());
-    var editShiftTimeView = Template7.compile(Dom7("#editShiftTimeView").html());
+    // Framework7 breaks up all the views into separate "Templates" which it then renders with context data I provide
+    let homeView = Template7.compile(Dom7("#homeView").html());
+    let appView = Template7.compile(Dom7("#appView").html());
+    let shiftsFiltersView = Template7.compile(Dom7("#shiftsFiltersView").html());
+    let shiftDetailsView = Template7.compile(Dom7("#shiftDetailsView").html());
+    let summariesFiltersView = Template7.compile(Dom7("#summariesFiltersView").html());
+    let changeEmployeeView = Template7.compile(Dom7("#changeEmployeeView").html());
+    let createShiftView = Template7.compile(Dom7("#createShiftView").html());
+    let editShiftTimeView = Template7.compile(Dom7("#editShiftTimeView").html());
 
 
     // This entire section of variables is used to cache or keep track of data needed for the UI or for querying the REST API for more data.
-    var current_user_id = -1;
-    var current_user_name = "";
-    var current_user_is_manager = false;
-    var current_date = new Date();
+    let current_user_id = -1;
+    let current_user_name = "";
+    let current_user_is_manager = false;
+    let current_date = new Date();
 
     // The filter variables will be used to generate urls for API requests.
-    var current_shifts_filter = {
+    let current_shifts_filter = {
         show_only_my_shifts: true,
         date_from: new Date(new Date().setDate(current_date.getDate() - 7)),
         date_to: new Date(),
@@ -50,8 +50,8 @@
         sort: " start_time",
         message: "Showing shifts for the next 7 days.",
         GetShiftURL: function () {
-            var url = this.base_url;
-            var params = ["current_user_id=" + current_user_id];
+            let url = this.base_url;
+            let params = ["current_user_id=" + current_user_id];
 
             if (this.show_only_my_shifts) {
                 url += "/mine";
@@ -74,7 +74,7 @@
             this.message = "Showing shifts from " + parseDateToURLParam(this.date_from) + " to " + parseDateToURLParam(this.date_to);
         }
     };
-    var current_summary_filter = {
+    let current_summary_filter = {
         date_from: new Date(new Date().setDate(current_date.getDate() - 14)),
         date_to: new Date(new Date().setDate(current_date.getDate() + 7)),
         page: 1,
@@ -83,8 +83,8 @@
         sort: "-week_start",
         message: "Showing shifts for the next 14 days.",
         GetSummariesURL: function () {
-            var url = this.base_url + "/" + current_user_id;
-            var params = ["current_user_id=" + current_user_id];
+            let url = this.base_url + "/" + current_user_id;
+            let params = ["current_user_id=" + current_user_id];
 
             this.message = "Showing shifts from " + parseDateToURLParam(this.date_from) + " to " + parseDateToURLParam(this.date_to);
             params.push("date_from=" + parseDateToURLParam(this.date_from));
@@ -103,14 +103,14 @@
             this.message = "Showing shifts from " + parseDateToURLParam(this.date_from) + " to " + parseDateToURLParam(this.date_to);
         }
     };
-    var current_overlapping_filter = {
+    let current_overlapping_filter = {
         id: -1,
         page: 1,
         page_size: 1000,
         base_url: "http://localhost:8080/api/shifts/overlapping",
         GetOverlappingURL: function () {
-            var url = this.base_url + "/" + this.id;
-            var params = ["current_user_id=" + current_user_id];
+            let url = this.base_url + "/" + this.id;
+            let params = ["current_user_id=" + current_user_id];
 
             params.push("page=" + this.page);
             params.push("page_size=" + this.page_size);
@@ -118,27 +118,26 @@
             return url;
         },
     };
-    var current_non_overlapping_filter = {
+    let current_non_overlapping_filter = {
         id: -1,
         base_url: "http://localhost:8080/api/shifts/nonoverlapping",
         GetAvailableUsersURL: function () {
-            var url = this.base_url + "/" + this.id + "/users";
-            var params = ["current_user_id=" + current_user_id];
+            let url = this.base_url + "/" + this.id + "/users";
+            let params = ["current_user_id=" + current_user_id];
             url = url + "?" + params.join("&");
             return url;
         },
     };
-    var shifts = [];
-    var summaries = [];
-    var current_shift_detail;
+    let shifts = [];
+    let summaries = [];
+    let current_shift_detail;
 
     function parseDateToURLParam(date) {
         return encodeURI((date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear());
     }
 
-    var usersAvailableForShift = [];
-    var pickerDevice;
-    var app = new Framework7({
+    let usersAvailableForShift = [];
+    let app = new Framework7({
         ios: true,
         desktop: false,
         // App root element
@@ -224,7 +223,7 @@
                 },
                 on: {
                     pageBeforeIn: function (e, page) {
-                        var calendarRange = app.calendar.create({
+                        let calendarRange = app.calendar.create({
                             inputEl: '#shiftDateRange',
                             dateFormat: 'M dd yyyy',
                             rangePicker: true,
@@ -254,7 +253,7 @@
                 },
                 on: {
                     pageBeforeIn: function (e, page) {
-                        var calendarRange = app.calendar.create({
+                        let calendarRange = app.calendar.create({
                             inputEl: '#summaryDateRange',
                             dateFormat: 'M dd yyyy',
                             rangePicker: true,
@@ -359,8 +358,8 @@
                 on: {
                     pageBeforeIn: function (e, page) {
 
-                        var oAP1, oAP2;
-                        var dStartD, dEndD, sStartD, sEndD;
+                        let oAP1, oAP2;
+                        let dStartD, dEndD, sStartD, sEndD;
 
                         dStartD = new Date();
                         dEndD = new Date(dStartD.getTime() + (8 * $.AnyPicker.extra.iMS.h));
@@ -417,15 +416,15 @@
                                 }
                             });
 
-                        var name_ids = [];
-                        var names = [];
+                        let name_ids = [];
+                        let names = [];
                         for (let i = 0; i < usersAvailableForShift.length; i++) {
                             name_ids[i] = usersAvailableForShift[i].id;
                             names[i] = usersAvailableForShift[i].name;
                         }
 
-                        var manager_ids = [];
-                        var managers = [];
+                        let manager_ids = [];
+                        let managers = [];
                         for (let i = 0; i < usersAvailableForShift.length; i++) {
                             if (usersAvailableForShift[i].role == "manager") {
                                 manager_ids.push(usersAvailableForShift[i].id);
@@ -433,7 +432,7 @@
                             }
                         }
 
-                        var pickerUser = app.picker.create({
+                        let pickerUser = app.picker.create({
                             inputEl: '#create-shift-user',
                             rotateEffect: true,
                             formatValue: function (values, displayValues) {
@@ -456,7 +455,7 @@
                             }
                         });
 
-                        var pickerManager = app.picker.create({
+                        let pickerManager = app.picker.create({
                             inputEl: '#create-shift-manager',
                             rotateEffect: true,
                             formatValue: function (values, displayValues) {
@@ -498,8 +497,8 @@
                 on: {
                     pageBeforeIn: function (e, page) {
 
-                        var oAP1, oAP2;
-                        var dStartD, dEndD, sStartD, sEndD;
+                        let oAP1, oAP2;
+                        let dStartD, dEndD, sStartD, sEndD;
 
                         dStartD = new Date(current_shift_detail.start_time);
                         dEndD = new Date(current_shift_detail.end_time);
@@ -556,15 +555,15 @@
                                 }
                             });
 
-                        var name_ids = [];
-                        var names = [];
+                        let name_ids = [];
+                        let names = [];
                         for (let i = 0; i < usersAvailableForShift.length; i++) {
                             name_ids[i] = usersAvailableForShift[i].id;
                             names[i] = usersAvailableForShift[i].name;
                         }
 
-                        var manager_ids = [];
-                        var managers = [];
+                        let manager_ids = [];
+                        let managers = [];
                         for (let i = 0; i < usersAvailableForShift.length; i++) {
                             if (usersAvailableForShift[i].role == "manager") {
                                 manager_ids.push(usersAvailableForShift[i].id);
@@ -572,7 +571,7 @@
                             }
                         }
 
-                        var pickerUser = app.picker.create({
+                        let pickerUser = app.picker.create({
                             inputEl: '#create-shift-user',
                             rotateEffect: true,
                             formatValue: function (values, displayValues) {
@@ -595,7 +594,7 @@
                             }
                         });
 
-                        var pickerManager = app.picker.create({
+                        let pickerManager = app.picker.create({
                             inputEl: '#create-shift-manager',
                             rotateEffect: true,
                             formatValue: function (values, displayValues) {
@@ -657,10 +656,10 @@
 
     $(document).on("click", "#submitShiftFilter", function () {
         current_shifts_filter.show_only_my_shifts = $("#showOnlyMyShifts")[0].checked;
-        var shiftDateRange = $("#shiftDateRange").val();
+        let shiftDateRange = $("#shiftDateRange").val();
         if (shiftDateRange != "") {
-            var date_1 = new Date(shiftDateRange.split(" - ")[0]);
-            var date_2 = new Date(shiftDateRange.split(" - ")[1]);
+            let date_1 = new Date(shiftDateRange.split(" - ")[0]);
+            let date_2 = new Date(shiftDateRange.split(" - ")[1]);
             if (date_1.getTime() < date_2.getTime()) {
                 current_shifts_filter.date_from = date_1;
                 current_shifts_filter.date_to = date_2;
@@ -676,10 +675,10 @@
     });
 
     $(document).on("click", "#submitSummaryFilter", function () {
-        var shiftDateRange = $("#summaryDateRange").val();
+        let shiftDateRange = $("#summaryDateRange").val();
         if (shiftDateRange != "") {
-            var date_1 = new Date(shiftDateRange.split(" - ")[0]);
-            var date_2 = new Date(shiftDateRange.split(" - ")[1]);
+            let date_1 = new Date(shiftDateRange.split(" - ")[0]);
+            let date_2 = new Date(shiftDateRange.split(" - ")[1]);
             if (date_1.getTime() < date_2.getTime()) {
                 current_summary_filter.date_from = date_1;
                 current_summary_filter.date_to = date_2;
@@ -704,7 +703,7 @@
     });
 
     $(document).on("click", "#submitEmployeeChange", function () {
-        var selValue = $('input[name=employee-radio]:checked').val();
+        let selValue = $('input[name=employee-radio]:checked').val();
         if (selValue != null) {
             updateShiftEmployee(current_overlapping_filter.id, parseInt(selValue));
         }
@@ -800,10 +799,10 @@
     }
 
     function createShift(){
-        var from_date = $("#ip-start-date").val();
-        var to_date = $("#ip-end-date").val();
-        var user_id = isNaN($("#create-shift-user").attr("user-id")) ? null : parseInt($("#create-shift-user").attr("user-id"));
-        var manager_id = isNaN($("#create-shift-manager").attr("user-id")) ? null : parseInt($("#create-shift-manager").attr("user-id"));
+        let from_date = $("#ip-start-date").val();
+        let to_date = $("#ip-end-date").val();
+        let user_id = isNaN($("#create-shift-user").attr("user-id")) ? null : parseInt($("#create-shift-user").attr("user-id"));
+        let manager_id = isNaN($("#create-shift-manager").attr("user-id")) ? null : parseInt($("#create-shift-manager").attr("user-id"));
         if (from_date.trim() == "") {
             app.dialog.alert("Error, start time cannot be blank!", "Error!");
             return;
