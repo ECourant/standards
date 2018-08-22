@@ -614,6 +614,9 @@
                         reloadAll: true
                     });
                 }, 50);
+            },
+            error: function(response) {
+                app.dialog.alert(response.responseJSON.message, "Error!");
             }
         });
     }
@@ -650,6 +653,9 @@
                         reloadAll: true
                     });
                 }, 50);
+            },
+            error: function(response) {
+                app.dialog.alert(response.responseJSON.message, "Error!");
             }
         });
     }
@@ -691,13 +697,8 @@
                     reloadAll: true
                 });
             },
-            fail: function(response) {
-                console.log("FAILEd");
-                app.dialog.alert(response.message, "Error!");
-            },
-            complete: function() {
-                console.log("complete");
-
+            error: function(response) {
+                app.dialog.alert(response.responseJSON.message, "Error!");
             }
         });
     }
