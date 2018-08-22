@@ -354,15 +354,8 @@ func (ctx DShifts) cleanShift(id *int, shift *Shift) *DError {
 
 func (ctx DShifts) verifyShift(id *int, shift Shift, db *gorm.DB) *DError {
 	// Verify that the shift even exists.
-	if id != nil {
-		count := 0
-		db.
-			Table("public.vw_shifts_api").
-			Where("id = ?", *id).
-			Count(&count)
-		if count != 1 {
-			return NewNotFoundError(fmt.Sprintf("Error, shift ID %d cannot be updated because it doesn't exist.", *id))
-		}
+	if id != nil && !ctx.shiftExists(*id, db) {
+		return NewNotFoundError(fmt.Sprintf("Error, shift ID %d cannot be updated because it doesn't exist.", *id))
 	}
 
 	if shift.Break != nil {
