@@ -78,7 +78,7 @@ VALUES (3, 1, 'Sun, Aug 17 16:00:00.000 2018', 'Mon, Aug 17 18:00:00.00 2018'),
 -- Also all of the RFC 2822 formatting is done in the view itself.
 DROP VIEW IF EXISTS public.vw_users_api;
 CREATE VIEW public.vw_users_api AS
-  SELECT id, name, email, phone, role, to_char(created_at, 'Dy, Mon DD HH24:MI:SS.MS YYYY') AS created_at, to_char(updated_at, 'Dy, Mon DD HH24:MI:SS.MS YYYY') AS updated_at
+  SELECT id, name, email, phone, role, to_char(created_at, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT' AS created_at, to_char(updated_at, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT' AS updated_at
   FROM public.users;
 
 
@@ -94,8 +94,8 @@ CREATE VIEW public.vw_shifts_api AS
                      manager.email,
                      manager.phone,
                      manager.role,
-                     to_char(manager.created_at, 'Dy, Mon DD HH24:MI:SS.MS YYYY'),
-                     to_char(manager.updated_at, 'Dy, Mon DD HH24:MI:SS.MS YYYY')) :: public.user) AS manager_user,
+                     to_char(manager.created_at, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT',
+                     to_char(manager.updated_at, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT') :: public.user) AS manager_user,
          s.employee_id,
          CASE
            WHEN s.employee_id IS NOT NULL THEN to_json(row (employee.id,
@@ -104,15 +104,15 @@ CREATE VIEW public.vw_shifts_api AS
                                                            employee.phone,
                                                            employee.role,
                                                            to_char(employee.created_at,
-                                                                   'Dy, Mon DD HH24:MI:SS.MS YYYY'),
+                                                                   'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT',
                                                            to_char(employee.updated_at,
-                                                                   'Dy, Mon DD HH24:MI:SS.MS YYYY')) :: public.user)
+                                                                   'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT') :: public.user)
            ELSE NULL END                                                                           AS employee_user,
          s.break,
-         to_char(s.start_time, 'Dy, Mon DD HH24:MI:SS.MS YYYY')                                    AS start_time,
-         to_char(s.end_time, 'Dy, Mon DD HH24:MI:SS.MS YYYY')                                      AS end_time,
-         to_char(s.created_at, 'Dy, Mon DD HH24:MI:SS.MS YYYY')                                    AS created_at,
-         to_char(s.updated_at, 'Dy, Mon DD HH24:MI:SS.MS YYYY')                                    AS updated_at
+         to_char(s.start_time, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT'                                    AS start_time,
+         to_char(s.end_time, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT'                                      AS end_time,
+         to_char(s.created_at, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT'                                    AS created_at,
+         to_char(s.updated_at, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT'                                    AS updated_at
   FROM public.shifts s
          INNER JOIN public.users manager ON manager.id = s.manager_id
          LEFT JOIN public.users employee ON employee.id = s.employee_id;
@@ -129,8 +129,8 @@ CREATE VIEW public.vw_shifts_detailed_api AS
                      manager.email,
                      manager.phone,
                      manager.role,
-                     to_char(manager.created_at, 'Dy, Mon DD HH24:MI:SS.MS YYYY'),
-                     to_char(manager.updated_at, 'Dy, Mon DD HH24:MI:SS.MS YYYY')) :: public.user)                                                               AS manager_user,
+                     to_char(manager.created_at, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT',
+                     to_char(manager.updated_at, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT') :: public.user)                                                               AS manager_user,
          CASE
            WHEN s.employee_id IS NOT NULL THEN to_json(row (employee.id,
                                                            employee.name,
@@ -138,15 +138,15 @@ CREATE VIEW public.vw_shifts_detailed_api AS
                                                            employee.phone,
                                                            employee.role,
                                                            to_char(employee.created_at,
-                                                                   'Dy, Mon DD HH24:MI:SS.MS YYYY'),
+                                                                   'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT',
                                                            to_char(employee.updated_at,
-                                                                   'Dy, Mon DD HH24:MI:SS.MS YYYY')) :: public.user)
+                                                                   'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT') :: public.user)
            ELSE NULL END                                                                                                                                         AS employee_user,
          s.break,
-         to_char(s.start_time, 'Dy, Mon DD HH24:MI:SS.MS YYYY')                                                                                                  AS start_time,
-         to_char(s.end_time, 'Dy, Mon DD HH24:MI:SS.MS YYYY')                                                                                                    AS end_time,
-         to_char(s.created_at, 'Dy, Mon DD HH24:MI:SS.MS YYYY')                                                                                                  AS created_at,
-         to_char(s.updated_at, 'Dy, Mon DD HH24:MI:SS.MS YYYY')                                                                                                  AS updated_at,
+         to_char(s.start_time, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT'                                                                                                  AS start_time,
+         to_char(s.end_time, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT'                                                                                                    AS end_time,
+         to_char(s.created_at, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT'                                                                                                  AS created_at,
+         to_char(s.updated_at, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT'                                                                                                  AS updated_at,
          CASE -- This will take all of the shift objects and aggregate them into a JSON array. Essentially a 3 dimensional row.
            WHEN SUM(COALESCE(s2.id, 0)) > 0 THEN to_json(array_agg(
                                                            row (s2.id,
@@ -159,15 +159,15 @@ CREATE VIEW public.vw_shifts_detailed_api AS
                                                                    semployee.phone,
                                                                    semployee.role,
                                                                    to_char(semployee.created_at,
-                                                                           'Dy, Mon DD HH24:MI:SS.MS YYYY'),
+                                                                           'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT',
                                                                    to_char(semployee.updated_at,
-                                                                           'Dy, Mon DD HH24:MI:SS.MS YYYY')) :: public.user
+                                                                           'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT') :: public.user
                                                                  ELSE NULL END,
                                                                s2.break,
-                                                               to_char(s2.start_time, 'Dy, Mon DD HH24:MI:SS.MS YYYY'),
-                                                               to_char(s2.end_time, 'Dy, Mon DD HH24:MI:SS.MS YYYY'),
-                                                               to_char(s2.created_at, 'Dy, Mon DD HH24:MI:SS.MS YYYY'),
-                                                               to_char(s2.updated_at, 'Dy, Mon DD HH24:MI:SS.MS YYYY')
+                                                               to_char(s2.start_time, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT',
+                                                               to_char(s2.end_time, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT',
+                                                               to_char(s2.created_at, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT',
+                                                               to_char(s2.updated_at, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT'
                                                                ) :: public.shift))
            ELSE NULL END                                                                                                                                         AS shifts
   FROM public.shifts s
@@ -211,9 +211,9 @@ CREATE VIEW public.vw_shifts_available_users AS
                                          u.phone,
                                          u.role,
                                          to_char(u.created_at,
-                                                 'Dy, Mon DD HH24:MI:SS.MS YYYY'),
+                                                 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT',
                                          to_char(u.updated_at,
-                                                 'Dy, Mon DD HH24:MI:SS.MS YYYY')) :: public.user)) AS users_available
+                                                 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT') :: public.user)) AS users_available
   FROM (SELECT s.id,
                CASE
                  WHEN (array_agg((SELECT DISTINCT s2.employee_id))) = ARRAY[NULL::int] THEN ARRAY[0]
@@ -304,8 +304,8 @@ CREATE VIEW public.vw_shifts_summary_api AS
                      employee.email,
                      employee.phone,
                      employee.role,
-                     to_char(employee.created_at, 'Dy, Mon DD HH24:MI:SS.MS YYYY'),
-                     to_char(employee.updated_at, 'Dy, Mon DD HH24:MI:SS.MS YYYY')) :: public.user)                                  AS employee_user,
+                     to_char(employee.created_at, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT',
+                     to_char(employee.updated_at, 'Dy, DD Mon YYYY HH24:MI:SS ')||'CDT') :: public.user)                                  AS employee_user,
          s.week                                                                                                                      AS week,
          s.week_start                                                                                                                AS week_start,
          s.week_end                                                                                                                  AS week_end,
