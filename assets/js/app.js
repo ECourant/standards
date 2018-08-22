@@ -314,6 +314,7 @@
                                     context: {
                                         current_user_name: current_user_name,
                                         is_manager: current_user_is_manager,
+                                        users: data.results.users_available
                                     }
                                 });
                         } else {
@@ -357,128 +358,64 @@
                 },
                 on: {
                     pageBeforeIn: function (e, page) {
-                        var today = new Date();
-                        var pickerFromInline = app.picker.create({
-                            inputEl: '#create-shift-from-date',
-                            updateValuesOnTouchmove: true,
-                            rotateEffect: true,
-                            formatValue: function (values, displayValues) {
-                                return displayValues[0] + ' ' + values[1] + ', ' + values[2] + ' ' + values[3] + ':' + values[4];
-                            },
-                            cols: [
-                                // Months
-                                {
-                                    values: ('0 1 2 3 4 5 6 7 8 9 10 11').split(' '),
-                                    displayValues: ('January February March April May June July August September October November December').split(' '),
-                                    textAlign: 'left'
-                                },
-                                // Days
-                                {
-                                    values: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
-                                },
-                                // Years
-                                {
-                                    values: (function () {
-                                        var arr = [];
-                                        for (var i = 2018; i <= 2020; i++) { arr.push(i); }
-                                        return arr;
-                                    })(),
-                                },
-                                // Space divider
-                                // Hours
-                                {
-                                    values: (function () {
-                                        var arr = [];
-                                        for (var i = 0; i <= 23; i++) { arr.push(i); }
-                                        return arr;
-                                    })(),
-                                    textAlign: 'right'
-                                },
-                                // Divider
-                                {
-                                    divider: true,
-                                    content: ':'
-                                },
-                                // Minutes
-                                {
-                                    values: (function () {
-                                        var arr = [];
-                                        for (var i = 0; i <= 59; i++) { arr.push(i < 10 ? '0' + i : i); }
-                                        return arr;
-                                    })(),
-                                }
-                            ],
-                            on: {
-                                change: function (picker, values, displayValues) {
-                                    var daysInMonth = new Date(picker.value[2], picker.value[0]*1 + 1, 0).getDate();
-                                    if (values[1] > daysInMonth) {
-                                        picker.cols[1].setValue(daysInMonth);
-                                    }
-                                },
-                                close: function (picker) {
-                                    pickerToInline.setValue(picker.value);
-                                }
-                            }
-                        });
-                        var pickerToInline = app.picker.create({
-                            inputEl: '#create-shift-to-date',
-                            rotateEffect: true,
-                            formatValue: function (values, displayValues) {
-                                return displayValues[0] + ' ' + values[1] + ', ' + values[2] + ' ' + values[3] + ':' + values[4];
-                            },
-                            cols: [
-                                // Months
-                                {
-                                    values: ('0 1 2 3 4 5 6 7 8 9 10 11').split(' '),
-                                    displayValues: ('January February March April May June July August September October November December').split(' '),
-                                    textAlign: 'left'
-                                },
-                                // Days
-                                {
-                                    values: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
-                                },
-                                // Years
-                                {
-                                    values: (function () {
-                                        var arr = [];
-                                        for (var i = 2018; i <= 2020; i++) { arr.push(i); }
-                                        return arr;
-                                    })(),
-                                },
-                                // Space divider
-                                // Hours
-                                {
-                                    values: (function () {
-                                        var arr = [];
-                                        for (var i = 0; i <= 23; i++) { arr.push(i); }
-                                        return arr;
-                                    })(),
-                                    textAlign: 'right'
-                                },
-                                // Divider
-                                {
-                                    divider: true,
-                                    content: ':'
-                                },
-                                // Minutes
-                                {
-                                    values: (function () {
-                                        var arr = [];
-                                        for (var i = 0; i <= 59; i++) { arr.push(i < 10 ? '0' + i : i); }
-                                        return arr;
-                                    })(),
-                                }
-                            ],
-                            on: {
-                                change: function (picker, values, displayValues) {
-                                    var daysInMonth = new Date(picker.value[2], picker.value[0]*1 + 1, 0).getDate();
-                                    if (values[1] > daysInMonth) {
-                                        picker.cols[1].setValue(daysInMonth);
-                                    }
-                                },
-                            }
-                        });
 
+                        var oAP1, oAP2;
+                        var dStartD, dEndD, sStartD, sEndD;
+
+                        dStartD = new Date();
+                        dEndD = new Date(dStartD.getTime() + (8 * $.AnyPicker.extra.iMS.h));
+
+                        $("#ip-start-date").AnyPicker(
+                            {
+                                mode: "datetime",
+                                theme: "ios",
+                                inputDateTimeFormat: "MM/dd/yyyy hh:mm AA",
+                                dateTimeFormat: "MMM dd,yyyy hh:mm AA",
+
+                                onInit: function()
+                                {
+                                    oAP1 = this;
+                                    sEndD = oAP1.formatOutputDates(dEndD, "MM dd yyyy hh:mm AA");
+                                    oAP1.setMaximumDate(sEndD);
+                                    oAP1.setSelectedDate(dStartD);
+
+                                    console.log("maxValue : " + sEndD);
+                                },
+
+                                onSetOutput: function(sOutput, oSelectedValues)
+                                {
+                                    sStartD = sOutput;
+                                    oAP2.setMinimumDate(sStartD);
+                                    oAP2.setSelectedDate(sStartD);
+                                    console.log("minValue : " + oAP2.setting.minValue);
+                                }
+                            });
+
+                        $("#ip-end-date").AnyPicker(
+                            {
+                                mode: "datetime",
+                                theme: "ios",
+
+                                inputDateTimeFormat: "MM/dd/yyyy hh:mm AA",
+                                dateTimeFormat: "MMM dd,yyyy hh:mm AA",
+
+                                onInit: function()
+                                {
+                                    oAP2 = this;
+
+                                    sStartD = oAP2.formatOutputDates(dStartD);
+                                    oAP2.setMinimumDate(sStartD);
+                                    oAP2.setSelectedDate(dEndD);
+                                    console.log("minValue : " + sStartD);
+                                },
+
+                                onSetOutput: function(sOutput, oSelectedValues)
+                                {
+                                    sEndD = sOutput;
+                                    oAP1.setMaximumDate(sEndD);
+                                    console.log("maxValue : " + oAP1.setting.maxValue);
+                                }
+                            });
 
                         var name_ids = [];
                         var names = [];
@@ -718,8 +655,8 @@
     }
 
     function createShift(){
-        var from_date = $("#create-shift-from-date").val();
-        var to_date = $("#create-shift-to-date").val();
+        var from_date = $("#ip-start-date").val();
+        var to_date = $("#ip-end-date").val();
         var user_id = isNaN($("#create-shift-user").attr("user-id")) ? null : parseInt($("#create-shift-user").attr("user-id"));
         var manager_id = isNaN($("#create-shift-manager").attr("user-id")) ? null : parseInt($("#create-shift-manager").attr("user-id"));
         if (from_date.trim() == "") {
@@ -744,6 +681,7 @@
                 end_time: to_date
             }),
             success: function(response) {
+                console.log(response);
                 app.router.back("/appView/", {
                     animate: false,
                     ignoreCache: true,
@@ -754,7 +692,12 @@
                 });
             },
             fail: function(response) {
+                console.log("FAILEd");
                 app.dialog.alert(response.message, "Error!");
+            },
+            complete: function() {
+                console.log("complete");
+
             }
         });
     }
