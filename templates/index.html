@@ -110,10 +110,10 @@
                                             {{/if}}
                                         </div>
                                         <div class="item-row">
-                                            <div class="item-cell"><b>From:</b> {{start_time}}</div>
+                                            <div class="item-cell"><b>From:</b> {{format_date start_time}}</div>
                                         </div>
                                         <div class="item-row">
-                                            <div class="item-cell"><b>To:</b> {{end_time}}</div>
+                                            <div class="item-cell"><b>To:</b> {{format_date end_time}}</div>
                                         </div>
                                     </div>
                                 </a>
@@ -366,7 +366,7 @@
                             <a href="#" class="item-content">
                                 <div class="item-inner item-cell" style="color: black;">
                                     <div class="item-row">
-                                        <div class="item-cell"><b>Start:</b> {{detail.start_time}}</div>
+                                        <div class="item-cell"><b>Start:</b> {{format_date detail.start_time}}</div>
                                     </div>
                                 </div>
                             </a>
@@ -375,7 +375,7 @@
                             <a href="#" class="item-content">
                                 <div class="item-inner item-cell" style="color: black;">
                                     <div class="item-row">
-                                        <div class="item-cell"><b>End:</b> {{detail.end_time}}</div>
+                                        <div class="item-cell"><b>End:</b> {{format_date detail.end_time}}</div>
                                     </div>
                                 </div>
                             </a>
