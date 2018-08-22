@@ -223,7 +223,11 @@ func (ctx DShifts) CreateShift(shift Shift) (response *Shift, rerr *DError) {
 		shift.Break = &b
 	}
 
-	if err := ctx.verifyShift(nil, &shift, db); err != nil {
+	if err := ctx.cleanShift(nil, &shift); err != nil {
+		return nil, err
+	}
+
+	if err := ctx.verifyShift(nil, shift, db); err != nil {
 		return nil, err
 	}
 
@@ -263,7 +267,11 @@ func (ctx DShifts) UpdateShift(id int, shift Shift) (response *Shift, rerr *DErr
 		}
 	}()
 
-	if err := ctx.verifyShift(&id, &shift, db); err != nil {
+	if err := ctx.cleanShift(&id, &shift); err != nil {
+		return nil, err
+	}
+
+	if err := ctx.verifyShift(&id, shift, db); err != nil {
 		return nil, err
 	}
 
@@ -317,25 +325,7 @@ func (ctx DShifts) DeleteShift(id int) (rerr *DError) {
 	return nil
 }
 
-func (ctx DShifts) verifyShift(id *int, shift *Shift, db *gorm.DB) *DError {
-	// Verify that the shift even exists.
-	if id != nil {
-		count := 0
-		db.
-			Table("public.vw_shifts_api").
-			Where("id = ?", *id).
-			Count(&count)
-		if count != 1 {
-			return NewNotFoundError(fmt.Sprintf("Error, shift ID %d cannot be updated because it doesn't exist.", *id))
-		}
-	}
-
-	if shift.Break != nil {
-		if *shift.Break < 0 {
-			return NewClientError("Error, break must be non-negative.", nil)
-		}
-	}
-
+func (ctx DShifts) cleanShift(id *int, shift *Shift) *DError {
 	if id == nil { // If the shift doesn't exist yet verify the start and end times are included
 		if shift.StartTime == nil || strings.TrimSpace(*shift.StartTime) == "" {
 			return NewClientError("Error, start_time cannot be null or blank.", nil)
@@ -359,6 +349,29 @@ func (ctx DShifts) verifyShift(id *int, shift *Shift, db *gorm.DB) *DError {
 		shift.ManagerID = &ctx.UserID
 	}
 
+	return nil
+}
+
+func (ctx DShifts) verifyShift(id *int, shift Shift, db *gorm.DB) *DError {
+	// Verify that the shift even exists.
+	if id != nil {
+		count := 0
+		db.
+			Table("public.vw_shifts_api").
+			Where("id = ?", *id).
+			Count(&count)
+		if count != 1 {
+			return NewNotFoundError(fmt.Sprintf("Error, shift ID %d cannot be updated because it doesn't exist.", *id))
+		}
+	}
+
+	if shift.Break != nil {
+		if *shift.Break < 0 {
+			return NewClientError("Error, break must be non-negative.", nil)
+		}
+	}
+
+	
 	// Verify the user/managers related actually exist and are proper
 	if role, err := ctx.Users().GetUserRole(*shift.ManagerID); err != nil {
 		return NewServerError("Error, could not verify manager_id.", err)
@@ -368,23 +381,25 @@ func (ctx DShifts) verifyShift(id *int, shift *Shift, db *gorm.DB) *DError {
 		return NewNotFoundError(fmt.Sprintf("Error, manager_id %d does not exist.", *shift.ManagerID))
 	}
 
+	var employee_id *int = shift.EmployeeID
+
 	// If they don't specify the employee for an existing shift, retrieve it so we can make sure there are no conflicts.
-	if shift.EmployeeID == nil && id != nil {
-		employee_id := struct{
+	if employee_id == nil && id != nil {
+		eid := struct{
 			EmployeeID *int
 		}{}
 		db.
 			Table("public.vw_shifts_api").
 			Where("id = ?", *id).
 			Select("employee_id").
-			First(&employee_id)
-		shift.EmployeeID = employee_id.EmployeeID
+			First(&eid)
+		employee_id = eid.EmployeeID
 	}
 
 	// If the employee id is not null we want to verify
 	// that this shift will not conflict with another shift.
-	if shift.EmployeeID != nil && *shift.EmployeeID != -1 {
-		if role, err := ctx.Users().GetUserRole(*shift.EmployeeID); err != nil {
+	if employee_id != nil && *employee_id != -1 {
+		if role, err := ctx.Users().GetUserRole(*employee_id); err != nil {
 			return NewServerError("Error, could not verify employee_id.", err)
 		} else if role == nil {
 			return NewNotFoundError(fmt.Sprintf("Error, employee_id %d does not exist.", *shift.ManagerID))
@@ -418,7 +433,7 @@ func (ctx DShifts) verifyShift(id *int, shift *Shift, db *gorm.DB) *DError {
 		d := db.
 			Table("public.vw_shifts_api").
 			Select("id").
-			Where("employee_id = ?", *shift.EmployeeID).
+			Where("employee_id = ?", *employee_id).
 			// This will filter and return any shifts that overlap with the start and end timestamps provided.
 			Where("(?::timestamp < end_time::timestamp AND ?::timestamp >= start_time::timestamp) " +
 				"OR " +
@@ -437,7 +452,7 @@ func (ctx DShifts) verifyShift(id *int, shift *Shift, db *gorm.DB) *DError {
 			for i, shiftid := range ids {
 				conflictingShifts[i] = shiftid.ID
 			}
-			return NewClientError(fmt.Sprintf("Error, %d shift(s) already exist for user ID %d during the start -> end time. Conflicting shift(s): %s.", len(ids), *shift.EmployeeID, strings.Join(conflictingShifts, ", ")), nil)
+			return NewClientError(fmt.Sprintf("Error, %d shift(s) already exist for user ID %d during the start -> end time. Conflicting shift(s): %s.", len(ids), *employee_id, strings.Join(conflictingShifts, ", ")), nil)
 		}
 	}
 
