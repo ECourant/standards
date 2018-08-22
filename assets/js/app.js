@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
     // Helpers
     // I added these in to help a bit with displaying some data in a user friendly way using Framework7
     Template7.registerHelper('title_case', function (str) {
@@ -336,7 +336,6 @@
                                 id: -1
                             });
                             usersAvailableForShift = data.results;
-                            console.log(usersAvailableForShift);
                             resolve({
                                     template: createShiftView
                                 },
@@ -361,6 +360,7 @@
                         let dStartD, dEndD, sStartD, sEndD;
                         dStartD = new Date();
                         dEndD = new Date(dStartD.getTime() + (8 * $.AnyPicker.extra.iMS.h));
+                        // This will automatically set the time selectors to the current date and time.
                         $("#ip-start-date").AnyPicker(
                         {
                             mode: "datetime",
@@ -371,13 +371,13 @@
                             {
                                 oAP1 = this;
                                 sEndD = oAP1.formatOutputDates(dEndD, "MM dd yyyy hh:mm AA");
-                                oAP1.setMaximumDate(sEndD);
+                                oAP1.setMaximumDate(sEndD); //The start time cannot be greater than the end time.
                                 oAP1.setSelectedDate(dStartD);
                             },
                             onSetOutput: function(sOutput, oSelectedValues)
                             {
                                 sStartD = sOutput;
-                                oAP2.setMinimumDate(sStartD);
+                                oAP2.setMinimumDate(sStartD); //The end time cannot be greater than the end time.
                                 oAP2.setSelectedDate(sStartD);
                             }
                         });
@@ -392,16 +392,18 @@
                             {
                                 oAP2 = this;
                                 sStartD = oAP2.formatOutputDates(dStartD);
-                                oAP2.setMinimumDate(sStartD);
+                                oAP2.setMinimumDate(sStartD); // Make sure this time is not less than the start time.
                                 oAP2.setSelectedDate(dEndD);
                             },
                             onSetOutput: function(sOutput, oSelectedValues)
                             {
                                 sEndD = sOutput;
-                                oAP1.setMaximumDate(sEndD);
+                                oAP1.setMaximumDate(sEndD); // Make sure the start time is less than this time
                             }
                         });
 
+
+                        // This will get a list of users and their respective IDs for submitting to the API.
                         let name_ids = [];
                         let names = [];
                         for (let i = 0; i < usersAvailableForShift.length; i++) {
@@ -409,6 +411,7 @@
                             names[i] = usersAvailableForShift[i].name;
                         }
 
+                        // This will only list users with the manager role.
                         let manager_ids = [];
                         let managers = [];
                         for (let i = 0; i < usersAvailableForShift.length; i++) {
@@ -496,17 +499,17 @@
                             {
                                 oAP1 = this;
                                 sEndD = oAP1.formatOutputDates(dEndD, "MM dd yyyy hh:mm AA");
-                                oAP1.setMaximumDate(sEndD);
+                                oAP1.setMaximumDate(sEndD); //The start time cannot be greater than the end time.
                                 oAP1.setSelectedDate(dStartD);
                             },
                             onSetOutput: function(sOutput, oSelectedValues)
                             {
                                 sStartD = sOutput;
-                                oAP2.setMinimumDate(sStartD);
+                                oAP2.setMinimumDate(sStartD); //The end time cannot be greater than the end time.
                                 oAP2.setSelectedDate(sStartD);
                             }
                         });
-
+    
                         $("#ip-end-date").AnyPicker(
                         {
                             mode: "datetime",
@@ -517,13 +520,13 @@
                             {
                                 oAP2 = this;
                                 sStartD = oAP2.formatOutputDates(dStartD);
-                                oAP2.setMinimumDate(sStartD);
+                                oAP2.setMinimumDate(sStartD); // Make sure this time is not less than the start time.
                                 oAP2.setSelectedDate(dEndD);
                             },
                             onSetOutput: function(sOutput, oSelectedValues)
                             {
                                 sEndD = sOutput;
-                                oAP1.setMaximumDate(sEndD);
+                                oAP1.setMaximumDate(sEndD); // Make sure the start time is less than this time
                             }
                         });
 
@@ -800,7 +803,6 @@
                 end_time: to_date
             }),
             success: function(response) {
-                console.log(response);
                 app.router.back("/appView/", {
                     animate: false,
                     ignoreCache: true,
