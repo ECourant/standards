@@ -358,13 +358,10 @@ func (ctx DShifts) verifyShift(id *int, shift Shift, db *gorm.DB) *DError {
 		return NewNotFoundError(fmt.Sprintf("Error, shift ID %d cannot be updated because it doesn't exist.", *id))
 	}
 
-	if shift.Break != nil {
-		if *shift.Break < 0 {
-			return NewClientError("Error, break must be non-negative.", nil)
-		}
+	if shift.Break != nil && *shift.Break < 0 {
+		return NewClientError("Error, break must be non-negative.", nil)
 	}
 
-	
 	// Verify the user/managers related actually exist and are proper
 	if role, err := ctx.Users().GetUserRole(*shift.ManagerID); err != nil {
 		return NewServerError("Error, could not verify manager_id.", err)
