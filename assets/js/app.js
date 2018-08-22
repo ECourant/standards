@@ -18,7 +18,7 @@
     });
 
     Template7.registerHelper('format_date', function (date) {
-        return "FORMATTED DATE"
+        return moment(date).format("llll");
     });
 
     // Views
@@ -30,7 +30,7 @@
     var summariesFiltersView = Template7.compile(Dom7("#summariesFiltersView").html());
     var changeEmployeeView = Template7.compile(Dom7("#changeEmployeeView").html());
     var createShiftView = Template7.compile(Dom7("#createShiftView").html());
-
+    var editShiftTimeView = Template7.compile(Dom7("#editShiftTimeView").html());
 
 
     // This entire section of variables is used to cache or keep track of data needed for the UI or for querying the REST API for more data.
@@ -364,6 +364,145 @@
 
                         dStartD = new Date();
                         dEndD = new Date(dStartD.getTime() + (8 * $.AnyPicker.extra.iMS.h));
+
+                        $("#ip-start-date").AnyPicker(
+                            {
+                                mode: "datetime",
+                                theme: "ios",
+                                inputDateTimeFormat: "MM/dd/yyyy hh:mm AA",
+                                dateTimeFormat: "MMM dd,yyyy hh:mm AA",
+
+                                onInit: function()
+                                {
+                                    oAP1 = this;
+                                    sEndD = oAP1.formatOutputDates(dEndD, "MM dd yyyy hh:mm AA");
+                                    oAP1.setMaximumDate(sEndD);
+                                    oAP1.setSelectedDate(dStartD);
+
+                                    console.log("maxValue : " + sEndD);
+                                },
+
+                                onSetOutput: function(sOutput, oSelectedValues)
+                                {
+                                    sStartD = sOutput;
+                                    oAP2.setMinimumDate(sStartD);
+                                    oAP2.setSelectedDate(sStartD);
+                                    console.log("minValue : " + oAP2.setting.minValue);
+                                }
+                            });
+
+                        $("#ip-end-date").AnyPicker(
+                            {
+                                mode: "datetime",
+                                theme: "ios",
+
+                                inputDateTimeFormat: "MM/dd/yyyy hh:mm AA",
+                                dateTimeFormat: "MMM dd,yyyy hh:mm AA",
+
+                                onInit: function()
+                                {
+                                    oAP2 = this;
+
+                                    sStartD = oAP2.formatOutputDates(dStartD);
+                                    oAP2.setMinimumDate(sStartD);
+                                    oAP2.setSelectedDate(dEndD);
+                                    console.log("minValue : " + sStartD);
+                                },
+
+                                onSetOutput: function(sOutput, oSelectedValues)
+                                {
+                                    sEndD = sOutput;
+                                    oAP1.setMaximumDate(sEndD);
+                                    console.log("maxValue : " + oAP1.setting.maxValue);
+                                }
+                            });
+
+                        var name_ids = [];
+                        var names = [];
+                        for (let i = 0; i < usersAvailableForShift.length; i++) {
+                            name_ids[i] = usersAvailableForShift[i].id;
+                            names[i] = usersAvailableForShift[i].name;
+                        }
+
+                        var manager_ids = [];
+                        var managers = [];
+                        for (let i = 0; i < usersAvailableForShift.length; i++) {
+                            if (usersAvailableForShift[i].role == "manager") {
+                                manager_ids.push(usersAvailableForShift[i].id);
+                                managers.push(usersAvailableForShift[i].name);
+                            }
+                        }
+
+                        var pickerUser = app.picker.create({
+                            inputEl: '#create-shift-user',
+                            rotateEffect: true,
+                            formatValue: function (values, displayValues) {
+                                return displayValues[0];
+                            },
+                            cols: [
+                                {
+                                    textAlign: 'center',
+                                    values: name_ids,
+                                    displayValues: names,
+                                },
+                            ],
+                            on: {
+                                change: function (picker, values, displayValues) {
+
+                                },
+                                close: function (picker) {
+                                    $("#create-shift-user").attr("user-id", picker.value[0]);
+                                }
+                            }
+                        });
+
+                        var pickerManager = app.picker.create({
+                            inputEl: '#create-shift-manager',
+                            rotateEffect: true,
+                            formatValue: function (values, displayValues) {
+                                return displayValues[0];
+                            },
+                            cols: [
+                                {
+                                    textAlign: 'center',
+                                    values: manager_ids,
+                                    displayValues: managers,
+                                },
+                            ],
+                            on: {
+                                change: function (picker, values, displayValues) {
+
+                                },
+                                close: function (picker) {
+                                    $("#create-shift-manager").attr("user-id", picker.value[0]);
+                                }
+                            }
+                        });
+                    }
+                }
+            },
+            // View for editing the start and end time of shifts.
+            {
+                path: '/editShiftTimeView/',
+                async: function (routeTo, routeFrom, resolve, reject) {
+                    resolve({
+                        template: editShiftTimeView
+                    },
+                    {
+                        context: {
+                            current_user_name: current_user_name,
+                            is_manager: current_user_is_manager,
+                        }
+                    });
+                },
+                on: {
+                    pageBeforeIn: function (e, page) {
+
+                        var oAP1, oAP2;
+                        var dStartD, dEndD, sStartD, sEndD;
+
+                        dStartD = new Date(current_shift_detail.start_time);
+                        dEndD = new Date(current_shift_detail.end_time);
 
                         $("#ip-start-date").AnyPicker(
                             {

@@ -320,7 +320,7 @@
                 <div class="list inset">
                     <ul>
                         <li>
-                            <a href="#" class="item-content item-link change-employee" shift-id="{{detail.id}}">
+                            <a href="#" class="item-content {{#if is_manager}} item-link {{/if}} change-employee" shift-id="{{detail.id}}">
                                 <div class="item-inner item-cell" style="color: black;">
                                     <div class="item-row item-input-wrap">
                                         {{#if detail.employee_user}}
@@ -391,7 +391,7 @@
                         </li>
                         {{#if is_manager}}
                         <li>
-                            <a href="#" class="item-content item-link edit-shift-time">
+                            <a href="/editShiftTimeView/" class="item-content item-link edit-shift-time">
                                 <div class="item-inner item-cell" style="color: black;">
                                     <div class="item-row">
                                         <div class="item-cell" style="text-align: center;"><b>Edit Start/End Time</b></div>
@@ -551,11 +551,73 @@
         </div>
     </template>
 
+    <template id="editShiftTimeView" typeof="text/template7">
+        <div class="page">
+            <div class="navbar">
+                <div class="navbar-inner sliding">
+                    <div class="left"><a class="link back"><i class="icon icon-back"></i><span class="ios-only">Cancel</span></a></div>
+                    <div class="title">Edit Shift Times</div>
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="list inset">
+                    <ul>
+                        <li>
+                            <a href="#" class="item-content">
+                                <div class="item-inner item-cell" style="color: black;">
+                                    <div class="item-row">
+                                        <div class="item-cell"><b>Start Of Shift</b></div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="item-content">
+                                <div class="item-inner item-cell" style="color: black;">
+                                    <div class="item-input-wrap">
+                                        <input type="text" id="ip-start-date" placeholder="Start Time">
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
 
+                <div class="list inset">
+                    <ul>
+                        <li>
+                            <a href="#" class="item-content">
+                                <div class="item-inner item-cell" style="color: black;">
+                                    <div class="item-row">
+                                        <div class="item-cell"><b>End Of Shift</b></div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="item-content">
+                                <div class="item-inner item-cell" style="color: black;">
+                                    <div class="item-input-wrap">
+                                        <input type="text" id="ip-end-date" placeholder="End Time">
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="block" style="position: absolute; bottom: 0px; width: 100%;">
+                    <p class="row">
+                        <button id="createShift" class="col button button-big">Create Shift</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </template>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="application/javascript" src="/assets/js/framework7.js"></script>
     <script type="application/javascript" src="/assets/js/anypicker.min.js"></script>
+    <script type="application/javascript" src="/assets/js/moment.min.js"></script>
     <script type="application/javascript" src="/assets/js/app.js"></script>
 </body>
 
