@@ -544,12 +544,16 @@ Start by selecting a user on the home page of the web application.
 </p>
 </details>
 
+### As an employee, I want to know when I am working, by being able to see all of the shifts assigned to me.
 Once a user has been selected a main view will be visible showing the user's shifts.
 At the bottom of the page you can also select Summary or if you are a Manager you can select Users.
-<details><summary>Application View</summary>
+By default only your shifts will be shown. But you can change the shifts shown by searching by a date range and showing shifts for all users.
+<details><summary>Shifts View</summary>
 <p>
 
 ![alt text][app_view_shifts]
+
+![alt text][app_view_shifts_filter]
 
 </p>
 </details>
@@ -559,7 +563,7 @@ At the bottom of the page you can also select Summary or if you are a Manager yo
 
 [select_a_user]: https://github.com/ECourant/standards/raw/changes/images/select_a_user.png "User Selection"
 [app_view_shifts]: https://github.com/ECourant/standards/raw/changes/images/app_view_shifts.png "App View Shifts"
-
+[app_view_shifts_filter]: https://github.com/ECourant/standards/raw/changes/images/app_view_shifts_filter.png "App View Shifts Filter"
 
 
 # Notes
