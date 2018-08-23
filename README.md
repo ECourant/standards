@@ -544,9 +544,23 @@ Start by selecting a user on the home page of the web application.
 </p>
 </details>
 
+Once a user has been selected a main view will be visible showing the user's shifts.
+At the bottom of the page you can also select Summary or if you are a Manager you can select Users.
+<details><summary>Application View</summary>
+<p>
+
+![alt text][app_view_shifts]
+
+</p>
+</details>
+
+
 
 
 [select_a_user]: https://github.com/ECourant/standards/raw/changes/images/select_a_user.png "User Selection"
+[app_view_shifts]: https://github.com/ECourant/standards/raw/changes/images/app_view_shifts.png "App View Shifts"
+
+
 
 # Notes
 > I did create a small web app for a UI. But I didn't have enough time to build out all of the functionality from the user stories into the UI. It pretty much has everything except being able to see non-manager contact info, and being able to update the times of existing shifts. Other than that I believe all the functionality is there in the UI. You can access the ui by launching the application and going to `http://localhost:8080/`. 
