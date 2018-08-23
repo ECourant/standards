@@ -613,6 +613,20 @@ Shifts are validated on the backend, an error message will be displayed if the s
 </p>
 </details>
 
+
+### As a manager, I want to contact an employee, by seeing employee details.
+Employee information can be viewed on the Users tab of the main application. A list of users and their role is displayed.
+To view detailed information about an employee, simply select an employee from the list.
+<details><summary>User Information</summary>
+<p>
+
+![alt text][app_view_users]
+![alt text][app_view_users_detailed]
+
+</p>
+</details>
+
+
 [select_a_user]: https://github.com/ECourant/standards/raw/changes/images/select_a_user.png "User Selection"
 [app_view_shifts]: https://github.com/ECourant/standards/raw/changes/images/app_view_shifts.png "App View Shifts"
 [app_view_shifts_filter]: https://github.com/ECourant/standards/raw/changes/images/app_view_shifts_filter.png "App View Shifts Filter"
@@ -624,6 +638,8 @@ Shifts are validated on the backend, an error message will be displayed if the s
 [app_view_summary_filter]: https://github.com/ECourant/standards/raw/changes/images/app_view_summary_filter.png "App View Summary Filter"
 [app_view_create_shift]: https://github.com/ECourant/standards/raw/changes/images/app_view_create_shift.png "App View Create Shift"
 [app_view_create_shift_error]: https://github.com/ECourant/standards/raw/changes/images/app_view_create_shift_error.png "App View Create Shift Error"
+[app_view_users]: https://github.com/ECourant/standards/raw/changes/images/app_view_users.png "App View Users"
+[app_view_users_detailed]: https://github.com/ECourant/standards/raw/changes/images/app_view_users_detailed.png "App View Users Detailed"
 
 # Notes
 > I did create a small web app for a UI. But I didn't have enough time to build out all of the functionality from the user stories into the UI. It pretty much has everything except being able to see non-manager contact info, and being able to update the times of existing shifts. Other than that I believe all the functionality is there in the UI. You can access the ui by launching the application and going to `http://localhost:8080/`. 
