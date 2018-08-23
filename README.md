@@ -564,6 +564,7 @@ By default only your shifts will be shown. But you can change the shifts shown b
 A shift can be selected from the primary view and more details about the shift will be shown.
 This include the manager information for that shift as well as what people will have shift's overlapping this one.
 The second image is what will be shown if the current user is not a manager.
+Manager contact information is shown at the top of the view.
 <details><summary>Shift Details</summary>
 <p>
 
