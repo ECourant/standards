@@ -23,6 +23,10 @@
         return moment(date).format("llll");
     });
 
+    Template7.registerHelper('na', function (text) {
+        return text == null || text == "" ? "N/A" : text;
+    });
+
     // Views
     // Framework7 breaks up all the views into separate "Templates" which it then renders with context data I provide
     let homeView = Template7.compile(Dom7("#homeView").html());
@@ -33,7 +37,7 @@
     let changeEmployeeView = Template7.compile(Dom7("#changeEmployeeView").html());
     let createShiftView = Template7.compile(Dom7("#createShiftView").html());
     let editShiftTimeView = Template7.compile(Dom7("#editShiftTimeView").html());
-
+    let userDetailsView = Template7.compile(Dom7("#userDetailsView").html());
 
     // This entire section of variables is used to cache or keep track of data needed for the UI or for querying the REST API for more data.
     let current_user_id = -1;
@@ -135,8 +139,9 @@
         page_size: 1000,
         base_url: base_uri + "/api/users",
         sort: " name",
+        id: null,
         GetUsersURL: function () {
-            let url = this.base_url;
+            let url = this.id == null ? this.base_url : this.base_url + "/" + this.id;
             let params = ["current_user_id=" + current_user_id];
             params.push("page=" + this.page);
             params.push("page_size=" + this.page_size);
@@ -192,8 +197,10 @@
             {
                 path: '/appView/',
                 async: function (routeTo, routeFrom, resolve, reject) {
+                    current_users_filter.id = null;
                     shifts = [];
                     summaries = [];
+                    users = [];
                     app.request.json(current_shifts_filter.GetShiftURL(), function (shiftdata) {
                         if (shiftdata.success) {
                             shifts = shiftdata.results;
@@ -233,6 +240,34 @@
                         }
                     });
                 },
+            },
+            // This view is to show the contact details and other info of an employee.
+            {
+                path: '/userDetailsView/',
+                async: function (routeTo, routeFrom, resolve, reject) {
+                    app.request.json(current_users_filter.GetUsersURL(), function (data) {
+                        if (data.success) {
+                            resolve({
+                                template: userDetailsView
+                            },
+                            {
+                                context: {
+                                    current_user_name: current_user_name,
+                                    is_manager: current_user_is_manager,
+                                    detail: data.results
+                                }
+                            });
+                        } else {
+                            app.dialog.alert(data.message);
+                            reject();
+                        }
+                    });
+                },
+                on: {
+                    pageBeforeOut: function (e, page) {
+                        current_users_filter.id = null; // Cleanup after we are done viewing a user.
+                    }
+                }
             },
             // This view just alters the current shifts filter object.
             {
@@ -650,10 +685,16 @@
     });
 
     $(document).on("click", ".shift-link", function () {
-        id = $(this).attr("shift-id");
+        let id = $(this).attr("shift-id");
         current_overlapping_filter.id = parseInt(id);
         current_non_overlapping_filter.id = current_overlapping_filter.id;
         app.router.navigate("/shiftDetailsView/");
+    });
+
+    $(document).on("click", ".user-info", function() {
+        let id = parseInt($(this).attr("user-id"));
+        current_users_filter.id = id;
+        app.router.navigate("/userDetailsView/");
     });
 
     $(document).on("click", "#submitShiftFilter", function () {
