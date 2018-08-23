@@ -628,19 +628,19 @@ To view detailed information about an employee, simply select an employee from t
 </details>
 
 
-[select_a_user]: https://github.com/ECourant/standards/raw/changes/images/select_a_user.png "User Selection"
-[app_view_shifts]: https://github.com/ECourant/standards/raw/changes/images/app_view_shifts.png "App View Shifts"
-[app_view_shifts_filter]: https://github.com/ECourant/standards/raw/changes/images/app_view_shifts_filter.png "App View Shifts Filter"
-[app_view_shift_details]: https://github.com/ECourant/standards/raw/changes/images/app_view_shift_details.png "App View Shift Details"
-[app_view_shift_details_user]: https://github.com/ECourant/standards/raw/changes/images/app_view_shift_details_user.png "App View Shift Details"
-[app_view_edit_shift_employee]: https://github.com/ECourant/standards/raw/changes/images/app_view_edit_shift_employee.png "App View Edit Shift Employee"
-[app_view_edit_shift_times]: https://github.com/ECourant/standards/raw/changes/images/app_view_edit_shift_times.png "App View Edit Shift Times"
-[app_view_summaries]: https://github.com/ECourant/standards/raw/changes/images/app_view_summaries.png "App View Summaries"
-[app_view_summary_filter]: https://github.com/ECourant/standards/raw/changes/images/app_view_summary_filter.png "App View Summary Filter"
-[app_view_create_shift]: https://github.com/ECourant/standards/raw/changes/images/app_view_create_shift.png "App View Create Shift"
-[app_view_create_shift_error]: https://github.com/ECourant/standards/raw/changes/images/app_view_create_shift_error.png "App View Create Shift Error"
-[app_view_users]: https://github.com/ECourant/standards/raw/changes/images/app_view_users.png "App View Users"
-[app_view_users_detailed]: https://github.com/ECourant/standards/raw/changes/images/app_view_users_detailed.png "App View Users Detailed"
+[select_a_user]: https://github.com/ECourant/standards/raw/master/images/select_a_user.png "User Selection"
+[app_view_shifts]: https://github.com/ECourant/standards/raw/master/images/app_view_shifts.png "App View Shifts"
+[app_view_shifts_filter]: https://github.com/ECourant/standards/raw/master/images/app_view_shifts_filter.png "App View Shifts Filter"
+[app_view_shift_details]: https://github.com/ECourant/standards/raw/master/images/app_view_shift_details.png "App View Shift Details"
+[app_view_shift_details_user]: https://github.com/ECourant/standards/raw/master/images/app_view_shift_details_user.png "App View Shift Details"
+[app_view_edit_shift_employee]: https://github.com/ECourant/standards/raw/master/images/app_view_edit_shift_employee.png "App View Edit Shift Employee"
+[app_view_edit_shift_times]: https://github.com/ECourant/standards/raw/master/images/app_view_edit_shift_times.png "App View Edit Shift Times"
+[app_view_summaries]: https://github.com/ECourant/standards/raw/master/images/app_view_summaries.png "App View Summaries"
+[app_view_summary_filter]: https://github.com/ECourant/standards/raw/master/images/app_view_summary_filter.png "App View Summary Filter"
+[app_view_create_shift]: https://github.com/ECourant/standards/raw/master/images/app_view_create_shift.png "App View Create Shift"
+[app_view_create_shift_error]: https://github.com/ECourant/standards/raw/master/images/app_view_create_shift_error.png "App View Create Shift Error"
+[app_view_users]: https://github.com/ECourant/standards/raw/master/images/app_view_users.png "App View Users"
+[app_view_users_detailed]: https://github.com/ECourant/standards/raw/master/images/app_view_users_detailed.png "App View Users Detailed"
 
 # Notes
 > I did create a small web app for a UI. But I didn't have enough time to build out all of the functionality from the user stories into the UI. It pretty much has everything except being able to see non-manager contact info, and being able to update the times of existing shifts. Other than that I believe all the functionality is there in the UI. You can access the ui by launching the application and going to `http://localhost:8080/`. 
