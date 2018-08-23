@@ -545,6 +545,7 @@ Start by selecting a user on the home page of the web application.
 </details>
 
 ### As an employee, I want to know when I am working, by being able to see all of the shifts assigned to me.
+### As a manager, I want to see the schedule, by listing shifts within a specific time period.
 Once a user has been selected a main view will be visible showing the user's shifts.
 At the bottom of the page you can also select Summary or if you are a Manager you can select Users.
 By default only your shifts will be shown. But you can change the shifts shown by searching by a date range and showing shifts for all users.
@@ -599,6 +600,19 @@ Shifts will also be split if the shift were to start on a Sunday night and go in
 </p>
 </details>
 
+
+### As a manager, I want to schedule my employees, by creating shifts for any employee.
+Shifts can be created as a manager by pressing the green plus button in the bottom right hand corner.
+Shifts are validated on the backend, an error message will be displayed if the shift conflicts with another shift for the specified employee.
+<details><summary>Summaries</summary>
+<p>
+
+![alt text][app_view_create_shift]
+![alt text][app_view_create_shift_error]
+
+</p>
+</details>
+
 [select_a_user]: https://github.com/ECourant/standards/raw/changes/images/select_a_user.png "User Selection"
 [app_view_shifts]: https://github.com/ECourant/standards/raw/changes/images/app_view_shifts.png "App View Shifts"
 [app_view_shifts_filter]: https://github.com/ECourant/standards/raw/changes/images/app_view_shifts_filter.png "App View Shifts Filter"
@@ -608,8 +622,8 @@ Shifts will also be split if the shift were to start on a Sunday night and go in
 [app_view_edit_shift_times]: https://github.com/ECourant/standards/raw/changes/images/app_view_edit_shift_times.png "App View Edit Shift Times"
 [app_view_summaries]: https://github.com/ECourant/standards/raw/changes/images/app_view_summaries.png "App View Summaries"
 [app_view_summary_filter]: https://github.com/ECourant/standards/raw/changes/images/app_view_summary_filter.png "App View Summary Filter"
-
-
+[app_view_create_shift]: https://github.com/ECourant/standards/raw/changes/images/app_view_create_shift.png "App View Create Shift"
+[app_view_create_shift_error]: https://github.com/ECourant/standards/raw/changes/images/app_view_create_shift_error.png "App View Create Shift Error"
 
 # Notes
 > I did create a small web app for a UI. But I didn't have enough time to build out all of the functionality from the user stories into the UI. It pretty much has everything except being able to see non-manager contact info, and being able to update the times of existing shifts. Other than that I believe all the functionality is there in the UI. You can access the ui by launching the application and going to `http://localhost:8080/`. 
