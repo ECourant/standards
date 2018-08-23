@@ -55,6 +55,20 @@ func (ctx DUsers) GetUsers(params filtering.RequestParams) ([]User, *DError) {
 	return result, nil
 }
 
+func (ctx DUsers) GetUser(id int) (*User, *DError) {
+	db, err := gorm.Open("postgres", conf.Cfg.ConnectionString)
+	if err != nil {
+		return nil, NewServerError("Error, could not retrieve user at this time.", err)
+	}
+	defer db.Close()
+	result := User{}
+	db.
+		Table("public.vw_users_api").
+		Where("id = ?", id).
+		First(&result)
+	return &result, nil
+}
+
 func (ctx DUsers) CreateUser(user User) (response *User, rerr *DError) {
 	db, err := gorm.Open("postgres", conf.Cfg.ConnectionString)
 	if err != nil {

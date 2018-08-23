@@ -52,7 +52,6 @@ func rowToSummary(rows []summaryRow) []Summary {
 
 func (ctx DSummary) GetSummary(id *int, params filtering.RequestParams) ([]Summary, *DError) {
 	db, err := gorm.Open("postgres", conf.Cfg.ConnectionString)
-	db.LogMode(true)
 	if err != nil {
 		return nil, NewServerError("Error, could not retrieve summary at this time.", err)
 	}

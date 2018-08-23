@@ -534,6 +534,114 @@ GET /api/users?current_user_id=3
 </p>
 </details>
 
+# UI Documentation
+Start by selecting a user on the home page of the web application.
+<details><summary>Screenshot of user selection page</summary>
+<p>
+
+![alt text][select_a_user]
+
+</p>
+</details>
+
+### As an employee, I want to know when I am working, by being able to see all of the shifts assigned to me.
+### As a manager, I want to see the schedule, by listing shifts within a specific time period.
+Once a user has been selected a main view will be visible showing the user's shifts.
+At the bottom of the page you can also select Summary or if you are a Manager you can select Users.
+By default only your shifts will be shown. But you can change the shifts shown by searching by a date range and showing shifts for all users.
+<details><summary>Shifts View</summary>
+<p>
+
+![alt text][app_view_shifts]
+![alt text][app_view_shifts_filter]
+
+</p>
+</details>
+
+
+### As an employee, I want to know who I am working with, by being able to see the employees that are working during the same time period as me.
+### As an employee, I want to be able to contact my managers, by seeing manager contact information for my shifts.
+A shift can be selected from the primary view and more details about the shift will be shown.
+This include the manager information for that shift as well as what people will have shift's overlapping this one.
+The second image is what will be shown if the current user is not a manager.
+Manager contact information is shown at the top of the view.
+<details><summary>Shift Details</summary>
+<p>
+
+![alt text][app_view_shift_details]
+![alt text][app_view_shift_details_user]
+
+</p>
+</details>
+
+
+### As a manager, I want to be able to change a shift, by updating the time details.
+### As a manager, I want to be able to assign a shift, by changing the employee that will work a shift.
+A shift can be modified by a manager and the time details or the employee assigned can be updated.
+<details><summary>Editing Shifts</summary>
+<p>
+
+![alt text][app_view_edit_shift_employee]
+![alt text][app_view_edit_shift_times]
+
+</p>
+</details>
+
+
+### As an employee, I want to know how much I worked, by being able to get a summary of hours worked for each week.
+Summaries can be viewed on the summaries tab. It is assumed though that shifts that are in the future have not yet been worked because they haven't happened. So they will show an accurate scheduled time but will show 0 as hours worked.
+If a shift is "in progress", as in the shift has started but the end time is still greater than the current timestamp, the hours worked will show how much time has elapsed since the begining of the shift.
+Shifts will also be split if the shift were to start on a Sunday night and go into Monday. The break will be deducted from the latter half of the shift first though in an effort to keep all of the hours in a single period.
+<details><summary>Summaries</summary>
+<p>
+
+![alt text][app_view_summaries]
+![alt text][app_view_summary_filter]
+
+</p>
+</details>
+
+
+### As a manager, I want to schedule my employees, by creating shifts for any employee.
+Shifts can be created as a manager by pressing the green plus button in the bottom right hand corner.
+Shifts are validated on the backend, an error message will be displayed if the shift conflicts with another shift for the specified employee.
+<details><summary>Create Shift</summary>
+<p>
+
+![alt text][app_view_create_shift]
+![alt text][app_view_create_shift_error]
+
+</p>
+</details>
+
+
+### As a manager, I want to contact an employee, by seeing employee details.
+Employee information can be viewed on the Users tab of the main application. A list of users and their role is displayed.
+To view detailed information about an employee, simply select an employee from the list.
+<details><summary>User Information</summary>
+<p>
+
+![alt text][app_view_users]
+![alt text][app_view_users_detailed]
+
+</p>
+</details>
+
+
+[select_a_user]: https://github.com/ECourant/standards/raw/changes/images/select_a_user.png "User Selection"
+[app_view_shifts]: https://github.com/ECourant/standards/raw/changes/images/app_view_shifts.png "App View Shifts"
+[app_view_shifts_filter]: https://github.com/ECourant/standards/raw/changes/images/app_view_shifts_filter.png "App View Shifts Filter"
+[app_view_shift_details]: https://github.com/ECourant/standards/raw/changes/images/app_view_shift_details.png "App View Shift Details"
+[app_view_shift_details_user]: https://github.com/ECourant/standards/raw/changes/images/app_view_shift_details_user.png "App View Shift Details"
+[app_view_edit_shift_employee]: https://github.com/ECourant/standards/raw/changes/images/app_view_edit_shift_employee.png "App View Edit Shift Employee"
+[app_view_edit_shift_times]: https://github.com/ECourant/standards/raw/changes/images/app_view_edit_shift_times.png "App View Edit Shift Times"
+[app_view_summaries]: https://github.com/ECourant/standards/raw/changes/images/app_view_summaries.png "App View Summaries"
+[app_view_summary_filter]: https://github.com/ECourant/standards/raw/changes/images/app_view_summary_filter.png "App View Summary Filter"
+[app_view_create_shift]: https://github.com/ECourant/standards/raw/changes/images/app_view_create_shift.png "App View Create Shift"
+[app_view_create_shift_error]: https://github.com/ECourant/standards/raw/changes/images/app_view_create_shift_error.png "App View Create Shift Error"
+[app_view_users]: https://github.com/ECourant/standards/raw/changes/images/app_view_users.png "App View Users"
+[app_view_users_detailed]: https://github.com/ECourant/standards/raw/changes/images/app_view_users_detailed.png "App View Users Detailed"
+
 # Notes
 > I did create a small web app for a UI. But I didn't have enough time to build out all of the functionality from the user stories into the UI. It pretty much has everything except being able to see non-manager contact info, and being able to update the times of existing shifts. Other than that I believe all the functionality is there in the UI. You can access the ui by launching the application and going to `http://localhost:8080/`. 
 
