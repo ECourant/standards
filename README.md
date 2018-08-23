@@ -558,11 +558,24 @@ By default only your shifts will be shown. But you can change the shifts shown b
 </details>
 
 
+### As an employee, I want to know who I am working with, by being able to see the employees that are working during the same time period as me.
+A shift can be selected from the primary view and more details about the shift will be shown.
+This include the manager information for that shift as well as what people will have shift's overlapping this one.
+<details><summary>Shifts View</summary>
+<p>
+
+![alt text][app_view_shift_details]
+
+</p>
+</details>
+
+
 
 
 [select_a_user]: https://github.com/ECourant/standards/raw/changes/images/select_a_user.png "User Selection"
 [app_view_shifts]: https://github.com/ECourant/standards/raw/changes/images/app_view_shifts.png "App View Shifts"
 [app_view_shifts_filter]: https://github.com/ECourant/standards/raw/changes/images/app_view_shifts_filter.png "App View Shifts Filter"
+[app_view_shifts_details]: https://github.com/ECourant/standards/raw/changes/images/app_view_shifts_details.png "App View Shift Details"
 
 
 # Notes
