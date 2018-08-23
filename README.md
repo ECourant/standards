@@ -559,10 +559,11 @@ By default only your shifts will be shown. But you can change the shifts shown b
 
 
 ### As an employee, I want to know who I am working with, by being able to see the employees that are working during the same time period as me.
+### As an employee, I want to be able to contact my managers, by seeing manager contact information for my shifts.
 A shift can be selected from the primary view and more details about the shift will be shown.
 This include the manager information for that shift as well as what people will have shift's overlapping this one.
 The second image is what will be shown if the current user is not a manager.
-<details><summary>Shifts View</summary>
+<details><summary>Shift Details</summary>
 <p>
 
 ![alt text][app_view_shift_details]
@@ -575,7 +576,7 @@ The second image is what will be shown if the current user is not a manager.
 ### As a manager, I want to be able to change a shift, by updating the time details.
 ### As a manager, I want to be able to assign a shift, by changing the employee that will work a shift.
 A shift can be modified by a manager and the time details or the employee assigned can be updated.
-<details><summary>Shifts View</summary>
+<details><summary>Editing Shifts</summary>
 <p>
 
 ![alt text][app_view_edit_shift_employee]
@@ -585,6 +586,19 @@ A shift can be modified by a manager and the time details or the employee assign
 </details>
 
 
+### As an employee, I want to know how much I worked, by being able to get a summary of hours worked for each week.
+Summaries can be viewed on the summaries tab. It is assumed though that shifts that are in the future have not yet been worked because they haven't happened. So they will show an accurate scheduled time but will show 0 as hours worked.
+If a shift is "in progress", as in the shift has started but the end time is still greater than the current timestamp, the hours worked will show how much time has elapsed since the begining of the shift.
+Shifts will also be split if the shift were to start on a Sunday night and go into Monday. The break will be deducted from the latter half of the shift first though in an effort to keep all of the hours in a single period.
+<details><summary>Summaries</summary>
+<p>
+
+![alt text][app_view_summaries]
+![alt text][app_view_summary_filter]
+
+</p>
+</details>
+
 [select_a_user]: https://github.com/ECourant/standards/raw/changes/images/select_a_user.png "User Selection"
 [app_view_shifts]: https://github.com/ECourant/standards/raw/changes/images/app_view_shifts.png "App View Shifts"
 [app_view_shifts_filter]: https://github.com/ECourant/standards/raw/changes/images/app_view_shifts_filter.png "App View Shifts Filter"
@@ -592,6 +606,11 @@ A shift can be modified by a manager and the time details or the employee assign
 [app_view_shift_details_user]: https://github.com/ECourant/standards/raw/changes/images/app_view_shift_details_user.png "App View Shift Details"
 [app_view_edit_shift_employee]: https://github.com/ECourant/standards/raw/changes/images/app_view_edit_shift_employee.png "App View Edit Shift Employee"
 [app_view_edit_shift_times]: https://github.com/ECourant/standards/raw/changes/images/app_view_edit_shift_times.png "App View Edit Shift Times"
+[app_view_summaries]: https://github.com/ECourant/standards/raw/changes/images/app_view_summaries.png "App View Summaries"
+[app_view_summary_filter]: https://github.com/ECourant/standards/raw/changes/images/app_view_summary_filter.png "App View Summary Filter"
+
+
+
 # Notes
 > I did create a small web app for a UI. But I didn't have enough time to build out all of the functionality from the user stories into the UI. It pretty much has everything except being able to see non-manager contact info, and being able to update the times of existing shifts. Other than that I believe all the functionality is there in the UI. You can access the ui by launching the application and going to `http://localhost:8080/`. 
 
