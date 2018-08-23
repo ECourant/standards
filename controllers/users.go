@@ -23,6 +23,23 @@ func Users(p iris.Party) {
 		}
 	})
 
+	p.Get("/{id:int}", func(ctx iris.Context) {
+		if id, err := ctx.Params().GetInt("id"); err != nil {
+			ctx.StatusCode(400)
+			ctx.JSON(ErrorAPIResponse{
+				Success: false,
+				Message: "Error, could not parse user id.",
+			})
+		} else if result, err := ctx.Values().Get("Session").(data.DSession).Users().GetUser(id); err != nil {
+			data.ErrorResponse(ctx, err)
+		} else {
+			ctx.JSON(APIResponse{
+				Success: true,
+				Results: result,
+			})
+		}
+	})
+
 	p.Post("/", func(ctx iris.Context) {
 		newItem := data.User{}
 		if err := ctx.ReadJSON(&newItem); err != nil {
