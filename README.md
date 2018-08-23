@@ -552,7 +552,6 @@ By default only your shifts will be shown. But you can change the shifts shown b
 <p>
 
 ![alt text][app_view_shifts]
-
 ![alt text][app_view_shifts_filter]
 
 </p>
