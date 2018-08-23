@@ -536,12 +536,12 @@ GET /api/users?current_user_id=3
 
 # UI Documentation
 Start by selecting a user on the home page of the web application.
-![alt text][logo]
+![alt text][logo] ![alt text][logo2]
 
 
 
 [logo]: https://github.com/ECourant/standards/raw/changes/images/select_a_user.png "Logo Title Text 2"
-
+[logo2]: https://github.com/ECourant/standards/raw/changes/images/select_a_user.png "Logo Title Text 2"
 
 
 # Notes
