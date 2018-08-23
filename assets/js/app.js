@@ -1,4 +1,6 @@
 (function () {
+    let base_uri = "http://localhost:8080";
+
     // Helpers
     // I added these in to help a bit with displaying some data in a user friendly way using Framework7
     Template7.registerHelper('title_case', function (str) {
@@ -46,7 +48,7 @@
         date_to: new Date(),
         page: 1,
         page_size: 1000,
-        base_url: "http://localhost:8080/api/shifts",
+        base_url: base_uri + "/api/shifts",
         sort: " start_time",
         message: "Showing shifts for the next 7 days.",
         GetShiftURL: function () {
@@ -79,7 +81,7 @@
         date_to: new Date(new Date().setDate(current_date.getDate() + 7)),
         page: 1,
         page_size: 1000,
-        base_url: "http://localhost:8080/api/summaries",
+        base_url: base_uri + "/api/summaries",
         sort: "-week_start",
         message: "Showing shifts for the next 14 days.",
         GetSummariesURL: function () {
@@ -107,7 +109,7 @@
         id: -1,
         page: 1,
         page_size: 1000,
-        base_url: "http://localhost:8080/api/shifts/overlapping",
+        base_url: base_uri + "/api/shifts/overlapping",
         GetOverlappingURL: function () {
             let url = this.base_url + "/" + this.id;
             let params = ["current_user_id=" + current_user_id];
@@ -120,7 +122,7 @@
     };
     let current_non_overlapping_filter = {
         id: -1,
-        base_url: "http://localhost:8080/api/shifts/nonoverlapping",
+        base_url: base_uri + "/api/shifts/nonoverlapping",
         GetAvailableUsersURL: function () {
             let url = this.base_url + "/" + this.id + "/users";
             let params = ["current_user_id=" + current_user_id];
@@ -128,8 +130,24 @@
             return url;
         },
     };
+    let current_users_filter = {
+        page: 1,
+        page_size: 1000,
+        base_url: base_uri + "/api/users",
+        sort: " name",
+        GetUsersURL: function () {
+            let url = this.base_url;
+            let params = ["current_user_id=" + current_user_id];
+            params.push("page=" + this.page);
+            params.push("page_size=" + this.page_size);
+            params.push("order=" + encodeURI(this.sort));
+            url = url + "?" + params.join("&");
+            return url;
+        }
+    };
     let shifts = [];
     let summaries = [];
+    let users = [];
     let current_shift_detail;
 
     function parseDateToURLParam(date) {
@@ -156,7 +174,7 @@
             {
                 path: '/homeView/',
                 async: function (routeTo, routeFrom, resolve, reject) {
-                    app.request.json("http://localhost:8080/api/users?current_user_id=1&order= name", function (data) {
+                    app.request.json(base_uri + "/api/users?current_user_id=1&order= name", function (data) {
                         if (data.success) {
                             resolve({
                                     template: homeView
@@ -182,19 +200,28 @@
                             app.request.json(current_summary_filter.GetSummariesURL(), function (data) {
                                 if (data.success) {
                                     summaries = data.results;
-                                    resolve({
-                                            template: appView
-                                        },
-                                        {
-                                            context: {
-                                                current_user_name: current_user_name,
-                                                is_manager: current_user_is_manager,
-                                                shifts: shifts,
-                                                summaries: summaries,
-                                                shift_message: current_shifts_filter.message,
-                                                summary_message: current_summary_filter.message
-                                            }
-                                        });
+                                    app.request.json(current_users_filter.GetUsersURL(), function (userdata) {
+                                        if (userdata.success) {
+                                            users = userdata.results;
+                                            resolve({
+                                                template: appView
+                                            },
+                                            {
+                                                context: {
+                                                    current_user_name: current_user_name,
+                                                    is_manager: current_user_is_manager,
+                                                    shifts: shifts,
+                                                    summaries: summaries,
+                                                    users: users,
+                                                    shift_message: current_shifts_filter.message,
+                                                    summary_message: current_summary_filter.message
+                                                }
+                                            });
+                                        } else {
+                                            app.dialog.alert(userdata.message);
+                                            reject();
+                                        }
+                                    });
                                 } else {
                                     app.dialog.alert(data.message);
                                     reject();
@@ -705,7 +732,7 @@
     function updateShiftEmployee(shift_id, employee_id) {
         $.ajax({
             type: "PUT",
-            url: "http://localhost:8080/api/shifts/" + shift_id + "?current_user_id=" + current_user_id,
+            url: base_uri + "/api/shifts/" + shift_id + "?current_user_id=" + current_user_id,
             contentType: "application/json",
             data: JSON.stringify({
                 employee_id: employee_id,
@@ -743,7 +770,7 @@
     function updateShiftTime(shift_id, start_time, end_time) {
         $.ajax({
             type: "PUT",
-            url: "http://localhost:8080/api/shifts/" + shift_id + "?current_user_id=" + current_user_id,
+            url: base_uri + "/api/shifts/" + shift_id + "?current_user_id=" + current_user_id,
             contentType: "application/json",
             data: JSON.stringify({
                 start_time: start_time,
@@ -794,7 +821,7 @@
         }
         $.ajax({
             type: "POST",
-            url: "http://localhost:8080/api/shifts?current_user_id=" + current_user_id,
+            url: base_uri + "/api/shifts?current_user_id=" + current_user_id,
             contentType: "application/json",
             data: JSON.stringify({
                 manager_id: manager_id,

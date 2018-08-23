@@ -69,6 +69,9 @@
                     <!-- Links have "tab-link" class instead of just "link" to switch tabs -->
                     <a href="#shifts-tab" class="tab-link shifts-tab tab-link-active">Shifts</a>
                     <a href="#summary-tab" class="tab-link summary-tab">Summary</a>
+                    {{#if is_manager}}
+                    <a href="#users-tab" class="tab-link user-tab">Users</a>
+                    {{/if}}
                 </div>
             </div>
 
@@ -165,6 +168,41 @@
                                 </a>
                             </li>
                             {{/summaries}}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="page-content tab" id="users-tab">
+                    <div class="list inset">
+                        <ul>
+                            <li>
+                                <a href="#" class="item-content item-link filter-users">
+                                    <div class="item-inner item-cell" style="color: black;">
+                                        <div class="item-row">
+                                            <div class="item-cell">Filter Users</div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="list inset">
+                        <p style="font-size: 14px;">Showing users.</p>
+                        <ul>
+                            {{#users}}
+                            <li>
+                                <a href="#" class="item-content item-link">
+                                    <div class="item-inner item-cell" style="color: black;">
+                                        <div class="item-row">
+                                            <div class="item-cell"><b>Name:</b> {{name}}</div>
+                                            <div class="item-cell" style="text-align: right;">
+                                                <span class="badge {{role_badge role}}">{{title_case role}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            {{/users}}
                         </ul>
                     </div>
                 </div>
@@ -612,12 +650,10 @@
             </div>
         </div>
     </template>
-
     <script type="application/javascript" src="/assets/js/jquery.min.js"></script>
     <script type="application/javascript" src="/assets/js/framework7.js"></script>
     <script type="application/javascript" src="/assets/js/anypicker.min.js"></script>
     <script type="application/javascript" src="/assets/js/moment.min.js"></script>
     <script type="application/javascript" src="/assets/js/app.js"></script>
 </body>
-
 </html>
