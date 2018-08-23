@@ -155,6 +155,36 @@ func Test_CreateShiftConflicting(t *testing.T) {
 	}
 }
 
+func Test_CreateShiftConflicting2(t *testing.T) {
+	EmployeeID, ManagerID := 3, 3
+	StartTime, EndTime := "04-03-2018 8:00AM", "04-03-2018 10:00AM"
+	if result, err := getContext().Shifts().CreateShift(data.Shift{
+		EmployeeID: &EmployeeID,
+		ManagerID:  &ManagerID,
+		StartTime:  &StartTime,
+		EndTime:    &EndTime,
+	}); err != nil {
+		t.Fatal(err)
+	} else {
+		if result == nil {
+			t.Fatal("Error, should have failed to create shift as employee.")
+		} else {
+
+		}
+	}
+	StartTime, EndTime = "04-01-2018 7:00AM", "04-05-2018 9:00AM"
+	if _, err := getContext().Shifts().CreateShift(data.Shift{
+		EmployeeID: &EmployeeID,
+		ManagerID:  &ManagerID,
+		StartTime:  &StartTime,
+		EndTime:    &EndTime,
+	}); err != nil {
+
+	} else {
+		t.Fatal("Error, should have failed to create shift as employee.")
+	}
+}
+
 func Test_UpdateShiftRemoveEmployee(t *testing.T) {
 	EmployeeID, ManagerID := 3, 3
 	StartTime, EndTime := "03-04-2018 8:00AM", "03-04-2018 10:00AM"
