@@ -536,13 +536,17 @@ GET /api/users?current_user_id=3
 
 # UI Documentation
 Start by selecting a user on the home page of the web application.
-![alt text][logo] ![alt text][logo2]
+<details><summary>Screenshot of user selection page</summary>
+<p>
+
+![alt text][select_a_user]
+
+</p>
+</details>
 
 
 
-[logo]: https://github.com/ECourant/standards/raw/changes/images/select_a_user.png "Logo Title Text 2"
-[logo2]: https://github.com/ECourant/standards/raw/changes/images/select_a_user.png "Logo Title Text 2"
-
+[select_a_user]: https://github.com/ECourant/standards/raw/changes/images/select_a_user.png "User Selection"
 
 # Notes
 > I did create a small web app for a UI. But I didn't have enough time to build out all of the functionality from the user stories into the UI. It pretty much has everything except being able to see non-manager contact info, and being able to update the times of existing shifts. Other than that I believe all the functionality is there in the UI. You can access the ui by launching the application and going to `http://localhost:8080/`. 
