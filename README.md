@@ -604,7 +604,7 @@ Shifts will also be split if the shift were to start on a Sunday night and go in
 ### As a manager, I want to schedule my employees, by creating shifts for any employee.
 Shifts can be created as a manager by pressing the green plus button in the bottom right hand corner.
 Shifts are validated on the backend, an error message will be displayed if the shift conflicts with another shift for the specified employee.
-<details><summary>Summaries</summary>
+<details><summary>Create Shift</summary>
 <p>
 
 ![alt text][app_view_create_shift]
