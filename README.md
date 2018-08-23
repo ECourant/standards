@@ -561,23 +561,37 @@ By default only your shifts will be shown. But you can change the shifts shown b
 ### As an employee, I want to know who I am working with, by being able to see the employees that are working during the same time period as me.
 A shift can be selected from the primary view and more details about the shift will be shown.
 This include the manager information for that shift as well as what people will have shift's overlapping this one.
+The second image is what will be shown if the current user is not a manager.
 <details><summary>Shifts View</summary>
 <p>
 
 ![alt text][app_view_shift_details]
+![alt text][app_view_shift_details_user]
 
 </p>
 </details>
 
 
+### As a manager, I want to be able to change a shift, by updating the time details.
+### As a manager, I want to be able to assign a shift, by changing the employee that will work a shift.
+A shift can be modified by a manager and the time details or the employee assigned can be updated.
+<details><summary>Shifts View</summary>
+<p>
+
+![alt text][app_view_edit_shift_employee]
+![alt text][app_view_edit_shift_times]
+
+</p>
+</details>
 
 
 [select_a_user]: https://github.com/ECourant/standards/raw/changes/images/select_a_user.png "User Selection"
 [app_view_shifts]: https://github.com/ECourant/standards/raw/changes/images/app_view_shifts.png "App View Shifts"
 [app_view_shifts_filter]: https://github.com/ECourant/standards/raw/changes/images/app_view_shifts_filter.png "App View Shifts Filter"
 [app_view_shift_details]: https://github.com/ECourant/standards/raw/changes/images/app_view_shift_details.png "App View Shift Details"
-
-
+[app_view_shift_details_user]: https://github.com/ECourant/standards/raw/changes/images/app_view_shift_details_user.png "App View Shift Details"
+[app_view_edit_shift_employee]: https://github.com/ECourant/standards/raw/changes/images/app_view_edit_shift_employee.png "App View Edit Shift Employee"
+[app_view_edit_shift_times]: https://github.com/ECourant/standards/raw/changes/images/app_view_edit_shift_times.png "App View Edit Shift Times"
 # Notes
 > I did create a small web app for a UI. But I didn't have enough time to build out all of the functionality from the user stories into the UI. It pretty much has everything except being able to see non-manager contact info, and being able to update the times of existing shifts. Other than that I believe all the functionality is there in the UI. You can access the ui by launching the application and going to `http://localhost:8080/`. 
 
